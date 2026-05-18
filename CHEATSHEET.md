@@ -143,6 +143,72 @@ const valida = verificarTransaccion(tx, publicKey); // true
 
 ---
 
+## 10. Generar Wallet (dirección estilo Ethereum)
+
+Claves en formato **DER** (Buffer binario), no objetos KeyObject.
+
+```js
+function generarWallet() {
+    const { privateKey, publicKey } = crypto.generateKeyPairSync('ec', {
+        namedCurve: 'prime256v1',
+        publicKeyEncoding:  { type: 'spki',  format: 'der' },  // → Buffer
+        privateKeyEncoding: { type: 'pkcs8', format: 'der' }   // → Buffer
+    });
+
+    // Dirección: hash SHA-256 de la clave pública, últimos 40 hex chars + "0x"
+    const direc = '0x' + crypto
+        .createHash('sha256')
+        .update(publicKey)       // publicKey es Buffer directamente
+        .digest('hex')
+        .slice(-40);             // últimos 40 chars = 20 bytes (estilo ETH)
+
+    return { direc, privateKey, publicKey };
+}
+
+const wallet = generarWallet();
+// wallet.direc → "0x..." (40 hex chars)
+```
+
+> **DER vs KeyObject:** con `format: 'der'` las claves son Buffer, no objetos.
+> Para firmar con Buffer privado: `crypto.sign('sha256', data, { key: privateKey, format: 'der', type: 'pkcs8' })`
+
+---
+
+## 11. Simular Transferencia con Gas Fee
+
+```js
+function simularTransferencia(origen, destino, monto, saldos) {
+    const GAS_FEE = 0.001;
+
+    if (!saldos[origen] || saldos[origen] < monto + GAS_FEE) {
+        console.log('saldo insuficiente');
+        return saldos;
+    }
+
+    saldos[origen]  -= (monto + GAS_FEE);
+    saldos[destino]  = (saldos[destino] || 0) + monto;  // inicializar si no existe
+
+    console.log(`transferidos ${monto} ETH de ${origen.slice(0, 8)}... a ${destino.slice(0, 8)}...`);
+    console.log(`    Gas fee: ${GAS_FEE} ETH`);
+
+    return saldos;
+}
+
+let saldos = {
+    [walletMati.direc]: 2.5,
+    [walletAna.direc]:  0.0
+};
+
+saldos = simularTransferencia(walletMati.direc, walletAna.direc, 1.0, saldos);
+```
+
+> **Bugs en index4.js:**
+> - Usa `walletMati.direccion` pero la propiedad se llama `direc`
+> - Dentro de `simularTransferencia` usa `de` y `para` (undefined) en vez de `origen` y `destino`
+> - `de.slice(0.8)` debería ser `origen.slice(0, 8)`
+
+---
+
 ## Flujo Completo (mental model)
 
 ```
@@ -161,6 +227,15 @@ TRANSACCIÓN
   datos → hash  (integridad: datos no fueron tocados)
   datos + privateKey → firma  (autenticidad: yo la mandé)
   verificar = re-hashear + re-verificar firma
+
+WALLET
+  generateKeyPairSync(ec, DER) → { privateKey: Buffer, publicKey: Buffer }
+  dirección = "0x" + sha256(publicKey).slice(-40)
+
+TRANSFERENCIA
+  validar saldo >= monto + gas
+  origen  -= monto + gas
+  destino += monto
 ```
 
 ---
@@ -174,3 +249,6 @@ TRANSACCIÓN
 | Firmar                    | `crypto.sign('sha256', Buffer.from(msg), privateKey)`                 |
 | Verificar firma           | `crypto.verify('sha256', Buffer.from(msg), publicKey, firma)`         |
 | Comparar hashes           | `recalcularHash(bloque) === bloque.hash`                              |
+| Generar claves DER        | `generateKeyPairSync('ec', { publicKeyEncoding: {type:'spki', format:'der'} })` |
+| Dirección wallet          | `'0x' + sha256(publicKeyBuffer).digest('hex').slice(-40)`            |
+| Inicializar saldo si null | `saldos[dest] = (saldos[dest] \|\| 0) + monto`                       |
