@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sección 2 — Características de Blockchain</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f5f5f0;
+  color: #1a1a1a;
+  padding: 1.5rem 1rem 3rem;
+  max-width: 740px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Nav */
+.nav {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.nav-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  background: #fff;
+  border: 1px solid #d3d1c7;
+  border-radius: 20px;
+  cursor: pointer;
+  color: #444;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.nav-btn:hover { background: #eee; }
+.nav-btn.active {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
+}
+
+/* Sections */
+.section { display: none; }
+.section.active { display: block; }
+
+h1 { font-size: 20px; font-weight: 500; margin-bottom: 0.4rem; }
+h2 { font-size: 17px; font-weight: 500; margin: 1.5rem 0 0.5rem; color: #1a1a1a; }
+.subtitle { font-size: 13px; color: #666; margin-bottom: 1.5rem; }
+p { font-size: 14px; color: #444; margin-bottom: 0.75rem; line-height: 1.65; }
+strong { font-weight: 500; color: #1a1a1a; }
+
+/* Cards */
+.card {
+  background: #fff;
+  border: 1px solid #d3d1c7;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.card-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+/* Fields */
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field label { font-size: 13px; color: #555; font-weight: 500; }
+input[type=text], textarea {
+  font-family: inherit;
+  font-size: 14px;
+  padding: 8px 12px;
+  border: 1px solid #d3d1c7;
+  border-radius: 8px;
+  background: #fff;
+  color: #1a1a1a;
+  width: 100%;
+}
+input[type=text]:focus, textarea:focus {
+  outline: 2px solid #378add;
+  outline-offset: -1px;
+}
+textarea { resize: vertical; min-height: 70px; }
+
+.hash-display {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  word-break: break-all;
+  background: #f5f5f0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #1a1a1a;
+  line-height: 1.6;
+  border: 1px solid #e8e8e4;
+  min-height: 44px;
+}
+.hash-display.match { background: #eaf3de; color: #27500a; border-color: #97c459; }
+.hash-display.nomatch { background: #fceaea; color: #791f1f; border-color: #f09595; }
+
+/* Buttons */
+button.primary {
+  padding: 9px 18px;
+  font-size: 14px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+button.primary:hover { opacity: 0.85; }
+button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+button.secondary {
+  padding: 8px 14px;
+  font-size: 13px;
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #d3d1c7;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+}
+button.secondary:hover { background: #f5f5f0; }
+
+/* Slider */
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.slider-row label { font-size: 13px; color: #555; min-width: 120px; }
+input[type=range] { flex: 1; }
+.slider-val {
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 28px;
+  text-align: right;
+}
+
+/* Stats row */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+.stat {
+  background: #f5f5f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.stat-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+.stat-val { font-size: 20px; font-weight: 500; color: #1a1a1a; }
+.stat-val.small { font-size: 13px; font-family: monospace; word-break: break-all; }
+
+/* Mining log */
+.log {
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  background: #1a1a1a;
+  color: #8ed888;
+  padding: 12px;
+  border-radius: 8px;
+  max-height: 160px;
+  overflow-y: auto;
+  margin-top: 12px;
+  line-height: 1.7;
+}
+.log .found { color: #fac775; font-weight: bold; }
+
+/* Mempool */
+.pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 60px;
+  padding: 12px;
+  border: 1.5px dashed #d3d1c7;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.tx {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #fff;
+  border: 1px solid #d3d1c7;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+}
+.tx:hover { background: #f0f0ec; }
+.tx.selected { background: #e6f1fb; border-color: #378add; }
+.tx.confirmed { background: #eaf3de; border-color: #97c459; opacity: 0.5; cursor: default; }
+.tx-fee { font-size: 10px; color: #888; }
+.fee-high { color: #27500a; font-weight: 500; }
+.fee-med { color: #633806; }
+.fee-low { color: #791f1f; }
+.pool-label { font-size: 11px; color: #888; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Consensus comparison */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 14px 0;
+}
+.cmp-card {
+  background: #fff;
+  border: 1px solid #d3d1c7;
+  border-radius: 12px;
+  padding: 14px;
+}
+.cmp-title {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 400;
+}
+.badge.pow { background: #faeeda; color: #633806; }
+.badge.pos { background: #e1f5ee; color: #085041; }
+.cmp-list { list-style: none; padding: 0; }
+.cmp-list li {
+  font-size: 13px;
+  color: #444;
+  padding: 5px 0;
+  border-bottom: 1px solid #f0f0ec;
+  display: flex;
+  gap: 8px;
+}
+.cmp-list li:last-child { border-bottom: none; }
+.cmp-list li::before { content: "→"; color: #b4b2a9; flex-shrink: 0; }
+
+/* Orphan visual */
+.chain-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.blk {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  border: 1px solid;
+}
+.blk.main { background: #e6f1fb; border-color: #378add; color: #0c447c; }
+.blk.orphan { background: #fceaea; border-color: #e24b4a; color: #791f1f; text-decoration: line-through; opacity: 0.7; }
+.blk.pending { background: #faeeda; border-color: #ba7517; color: #633806; }
+.arrow { color: #b4b2a9; font-size: 16px; }
+.fork-label { font-size: 11px; color: #888; margin-left: 4px; }
+
+/* Progress bar */
+.progress-wrap { background: #e8e8e4; border-radius: 4px; height: 8px; margin: 8px 0; overflow: hidden; }
+.progress-bar { height: 100%; background: #378add; border-radius: 4px; transition: width 0.1s; }
+
+/* Info box */
+.info-box {
+  background: #e6f1fb;
+  color: #0c447c;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 12px 0;
+  border-left: 3px solid #378add;
+}
+.warn-box {
+  background: #faeeda;
+  color: #633806;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 12px 0;
+  border-left: 3px solid #ba7517;
+}
+
+/* Exercise */
+.exercise {
+  background: #fff;
+  border: 2px solid #1a1a1a;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 2rem;
+}
+.exercise-title { font-size: 14px; font-weight: 500; margin-bottom: 10px; }
+.exercise ol { padding-left: 18px; }
+.exercise li { font-size: 13px; color: #444; margin-bottom: 8px; line-height: 1.6; }
+
+/* Avalanche viz */
+.bit-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin: 8px 0;
+}
+.bit {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: #d3d1c7;
+  transition: background 0.2s;
+}
+.bit.on { background: #378add; }
+.bit.changed { background: #e24b4a; }
+</style>
+</head>
+<body>
+
+<h1>Sección 2 — Características de Blockchain</h1>
+<p class="subtitle">SHA-256 · Minado · Mempool · PoW vs PoS · L1 vs L2 · Sequencer · Bloques huérfanos</p>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="show('sha256')">1 · SHA-256</button>
+  <button class="nav-btn" onclick="show('mining')">2 · Minado</button>
+  <button class="nav-btn" onclick="show('mempool')">3 · Mempool</button>
+  <button class="nav-btn" onclick="show('consensus')">4 · PoW vs PoS</button>
+  <button class="nav-btn" onclick="show('l1l2')">5 · L1 vs L2</button>
+  <button class="nav-btn" onclick="show('sequencer')">6 · Sequencer</button>
+  <button class="nav-btn" onclick="show('orphan')">7 · Huérfanos</button>
+  <button class="nav-btn" onclick="show('ejercicio')">Ejercicio</button>
+</nav>
+
+
+<!-- ===== SHA-256 ===== -->
+<div id="sha256" class="section active">
+  <h2>SHA-256: la huella dactilar de los datos</h2>
+  <p><strong>La analogía:</strong> SHA-256 es como una picadora de carne matemática. Metés cualquier cosa — una letra, un libro, el código fuente de Windows — y siempre salís con exactamente 64 caracteres hexadecimales. No podés "despicarlo" (es unidireccional), y si cambiás <em>un solo bit</em> de la entrada, la salida cambia completamente (efecto avalancha).</p>
+  <p>Para blockchain importa por dos razones: (1) cada bloque tiene una "firma" única de su contenido, y (2) cualquier modificación, por mínima que sea, produce un hash completamente distinto que invalida la cadena.</p>
+
+  <div class="card">
+    <div class="card-label">Probá el efecto avalancha</div>
+    <div class="field">
+      <label>Texto A (el original)</label>
+      <input type="text" id="sha-a" value="Alice paga 100 a Bob" oninput="updateSha()">
+    </div>
+    <div class="field">
+      <label>Hash de A</label>
+      <div class="hash-display" id="hash-a"></div>
+    </div>
+    <div class="field">
+      <label>Texto B (cambiá un solo carácter)</label>
+      <input type="text" id="sha-b" value="Alice paga 101 a Bob" oninput="updateSha()">
+    </div>
+    <div class="field">
+      <label>Hash de B</label>
+      <div class="hash-display" id="hash-b"></div>
+    </div>
+    <div class="field">
+      <label>Bits diferentes entre los dos hashes</label>
+      <div class="bit-row" id="bit-diff"></div>
+      <div style="font-size:12px; color:#888; margin-top:4px;" id="bit-count"></div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <strong>Para tu proyecto:</strong> cuando un inversor compra tokens, esa transacción se hashea junto con la anterior. Si alguien intenta cambiar el monto después, el hash cambia y toda la cadena posterior queda inválida. Por eso la blockchain es el "notario" de la propiedad fraccional.
+  </div>
+
+  <div class="card">
+    <div class="card-label">Propiedades clave de SHA-256</div>
+    <table style="width:100%; font-size: 13px; border-collapse: collapse;">
+      <tr style="border-bottom: 1px solid #eee;">
+        <td style="padding: 8px 0; color: #555; width: 180px;">Salida siempre igual</td>
+        <td style="padding: 8px 0; color: #444;">Misma entrada → siempre el mismo hash (determinístico)</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #eee;">
+        <td style="padding: 8px 0; color: #555;">Unidireccional</td>
+        <td style="padding: 8px 0; color: #444;">No podés recuperar la entrada a partir del hash</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #eee;">
+        <td style="padding: 8px 0; color: #555;">Efecto avalancha</td>
+        <td style="padding: 8px 0; color: #444;">Un bit distinto en la entrada → ~50% de bits cambian en la salida</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0; color: #555;">Sin colisiones prácticas</td>
+        <td style="padding: 8px 0; color: #444;">2²⁵⁶ posibles salidas. Imposible encontrar dos entradas con el mismo hash</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+<!-- ===== MINING ===== -->
+<div id="mining" class="section">
+  <h2>Minado: el rompecabezas criptográfico</h2>
+  <p><strong>La analogía:</strong> para agregar un bloque a Bitcoin, tenés que encontrar un número (llamado <strong>nonce</strong>) tal que cuando lo combinás con los datos del bloque y calculás SHA-256, el hash resultante empiece con cierta cantidad de ceros. Como SHA-256 es impredecible, la única forma de encontrar ese nonce es probar uno por uno: 0, 1, 2, 3… hasta que el hash cumpla la condición. Eso es el "trabajo" de Proof of Work.</p>
+  <p>Es como un dado trucado: si necesitás sacar un número menor a 1 en un dado de un millón de caras, tenés que tirar el dado millones de veces. No hay atajo.</p>
+
+  <div class="card">
+    <div class="card-label">Minador interactivo — encontrá un hash válido</div>
+    <div class="field">
+      <label>Datos del bloque</label>
+      <input type="text" id="mine-data" value="Alice paga 50 a Bob · Bloque #42">
+    </div>
+    <div class="slider-row">
+      <label>Dificultad (ceros requeridos)</label>
+      <input type="range" id="mine-diff" min="1" max="5" value="3" step="1" oninput="document.getElementById('mine-diff-val').textContent=this.value">
+      <span class="slider-val" id="mine-diff-val">3</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Intentos</div><div class="stat-val" id="mine-attempts">0</div></div>
+      <div class="stat"><div class="stat-label">Nonce encontrado</div><div class="stat-val" id="mine-nonce">—</div></div>
+      <div class="stat"><div class="stat-label">Tiempo</div><div class="stat-val" id="mine-time">—</div></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="mine-progress" style="width:0%"></div></div>
+    <div class="field" style="margin-top: 10px;">
+      <label>Hash encontrado</label>
+      <div class="hash-display" id="mine-hash">Presioná "Minar" para empezar</div>
+    </div>
+    <div style="display: flex; gap: 8px; margin-top: 8px;">
+      <button class="primary" id="mine-btn" onclick="startMining()">Minar</button>
+      <button class="secondary" onclick="stopMining()">Detener</button>
+    </div>
+    <div class="log" id="mine-log">— listo para minar —</div>
+  </div>
+
+  <div class="warn-box">
+    <strong>Probá dificultad 4 y 5.</strong> Vas a ver cómo el número de intentos explota exponencialmente. Cada cero requerido multiplica por ~16 la dificultad (porque cada carácter hex tiene 16 posibles valores). Bitcoin usa ~20 ceros. Imposible para una PC, necesitás hardware especializado (ASIC).
+  </div>
+
+  <div class="info-box">
+    <strong>Para tu proyecto:</strong> no vas a minar. Vas a usar una red ya minada. Pero entender esto te explica por qué el gas en Ethereum existe: los validadores también cobran por incluir tu transacción. Y por qué algunas transacciones tardan más: si no pagás suficiente gas, los mineros/validadores te dejan para el final.
+  </div>
+</div>
+
+
+<!-- ===== MEMPOOL ===== -->
+<div id="mempool" class="section">
+  <h2>Mempool: la sala de espera de las transacciones</h2>
+  <p><strong>La analogía:</strong> el mempool (memory pool) es como la sala de espera de un médico privado. Las transacciones llegan, se sientan a esperar, y el médico (el minero) atiende primero a quienes pagaron más caro la consulta (mayor fee). Si la sala está llena, los que pagan poco esperan horas. Si la sala está vacía, entrás al instante.</p>
+  <p>Cuando mandás ETH o interactuás con un smart contract, tu transacción va al mempool de la red. Cualquier validador del mundo puede verla ahí. El que mine el próximo bloque elige qué transacciones incluir, priorizando las que más fee pagan.</p>
+
+  <div class="card">
+    <div class="card-label">Mempool simulado — seleccioná qué transacciones incluir en el bloque</div>
+    <div class="pool-label">Transacciones pendientes (hacé click para seleccionar)</div>
+    <div class="pool" id="mempool-pool"></div>
+    <div class="pool-label">Bloque actual (máx. 4 transacciones)</div>
+    <div class="pool" id="mempool-block" style="border-color: #378add; background: #f8fbff; min-height: 52px;"></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Fee total recaudado</div><div class="stat-val" id="mem-fee">0 wei</div></div>
+      <div class="stat"><div class="stat-label">Txs en bloque</div><div class="stat-val" id="mem-count">0 / 4</div></div>
+    </div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+      <button class="primary" onclick="confirmBlock()">Confirmar bloque</button>
+      <button class="secondary" onclick="addRandomTx()">+ Agregar tx</button>
+      <button class="secondary" onclick="resetMempool()">Reiniciar</button>
+    </div>
+    <div style="font-size: 13px; color: #444; margin-top: 12px;" id="mem-tip"></div>
+  </div>
+
+  <div class="info-box">
+    <strong>Para tu proyecto:</strong> cuando un inversor compra tokens en tu plataforma, estás enviando una transacción a la red. Si ponés un gas price bajo, puede tardar minutos u horas en confirmarse. Tu backend tiene que manejar el estado "pendiente" — la transacción existe pero aún no está confirmada. Nunca trates como confirmada una transacción que solo está en el mempool.
+  </div>
+
+  <div class="card">
+    <div class="card-label">Concepto: base fee + priority fee (EIP-1559 en Ethereum)</div>
+    <p style="font-size: 13px; color: #444; margin: 0;">En Ethereum desde 2021, el fee tiene dos partes. El <strong>base fee</strong> lo fija el protocolo automáticamente según la congestión de la red, y se <em>quema</em> (nadie lo recibe). El <strong>priority fee</strong> (o "propina") lo elegís vos y se lo lleva el validador como incentivo para incluir tu transacción antes. El gas total que pagás es: <code style="font-family: monospace; background: #f0f0ec; padding: 1px 5px; border-radius: 4px;">(base fee + priority fee) × gas usado</code>.</p>
+  </div>
+</div>
+
+
+<!-- ===== CONSENSUS ===== -->
+<div id="consensus" class="section">
+  <h2>Protocolos de consenso: ¿cómo se ponen de acuerdo miles de nodos?</h2>
+  <p>La pregunta central: si no hay un servidor central que sea "el dueño" de la verdad, ¿cómo decide la red cuál es la versión correcta de la blockchain cuando dos nodos presentan versiones distintas?</p>
+  <p>La respuesta es el protocolo de consenso. Los dos más importantes para tu proyecto:</p>
+
+  <div class="compare">
+    <div class="cmp-card">
+      <div class="cmp-title">Proof of Work <span class="badge pow">PoW</span></div>
+      <ul class="cmp-list">
+        <li>Gastar electricidad = derecho a escribir</li>
+        <li>Seguridad = costo físico (hardware, luz)</li>
+        <li>Usado por Bitcoin</li>
+        <li>10 min por bloque en Bitcoin</li>
+        <li>Muy seguro, muy lento, contaminante</li>
+        <li>Sin requisito de capital previo</li>
+      </ul>
+    </div>
+    <div class="cmp-card">
+      <div class="cmp-title">Proof of Stake <span class="badge pos">PoS</span></div>
+      <ul class="cmp-list">
+        <li>Bloquear capital = derecho a escribir</li>
+        <li>Seguridad = costo de capital (stake)</li>
+        <li>Usado por Ethereum desde 2022</li>
+        <li>~12 segundos por bloque en ETH</li>
+        <li>Más rápido, eficiente, joven</li>
+        <li>Requiere 32 ETH para validar</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">La analogía más simple</div>
+    <p style="font-size: 13px; color: #444; margin-bottom: 10px;"><strong>PoW</strong> es como una carrera de atletismo: gana quien corra más rápido (tenga más poder de cómputo). El ganador puede escribir el siguiente bloque. Para hacer trampa, necesitarías ser más rápido que todos los demás juntos.</p>
+    <p style="font-size: 13px; color: #444; margin: 0;"><strong>PoS</strong> es como un sorteo proporcional al capital: si tenés el 10% del total de ETH stakeado, tenés el 10% de probabilidad de ser elegido para escribir el siguiente bloque. Para hacer trampa, necesitarías tener más del 33% del total stakeado — y si intentás hacer trampa, perdés tu stake (slashing).</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿Cuál usás en tu proyecto de tokenización?</div>
+    <div style="font-size: 13px; color: #444; line-height: 1.7;">
+      <p style="margin-bottom: 8px;">Casi seguro vas a deployar en una <strong>L2 sobre Ethereum</strong> (Polygon, Arbitrum, Base u Optimism). Acá el consenso funciona en dos capas:</p>
+      <p style="margin-bottom: 8px;"><strong>L2</strong> (donde viven tus contratos): las transacciones se procesan rápido y barato en la L2, con su propio sequencer.</p>
+      <p><strong>L1 Ethereum</strong>: periódicamente, la L2 publica un "resumen" de sus transacciones en Ethereum mainnet, heredando su seguridad PoS. Lo mejor de los dos mundos: velocidad y bajo costo de L2, con la seguridad de Ethereum L1.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Comparativa de redes para tu decisión</div>
+    <table style="width:100%; font-size: 12px; border-collapse: collapse;">
+      <thead>
+        <tr style="background: #f5f5f0;">
+          <th style="padding: 8px; text-align:left; font-weight:500; color:#555;">Red</th>
+          <th style="padding: 8px; text-align:left; font-weight:500; color:#555;">Tipo</th>
+          <th style="padding: 8px; text-align:left; font-weight:500; color:#555;">Gas típico</th>
+          <th style="padding: 8px; text-align:left; font-weight:500; color:#555;">Velocidad</th>
+          <th style="padding: 8px; text-align:left; font-weight:500; color:#555;">Madurez</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-top: 1px solid #eee;">
+          <td style="padding: 8px; font-weight:500;">Ethereum</td>
+          <td style="padding: 8px;">L1 PoS</td>
+          <td style="padding: 8px;">$5–50</td>
+          <td style="padding: 8px;">~12s</td>
+          <td style="padding: 8px; color: #27500a;">★★★★★</td>
+        </tr>
+        <tr style="border-top: 1px solid #eee; background: #f8fbff;">
+          <td style="padding: 8px; font-weight:500;">Polygon</td>
+          <td style="padding: 8px;">L2</td>
+          <td style="padding: 8px;">$0.001–0.01</td>
+          <td style="padding: 8px;">~2s</td>
+          <td style="padding: 8px; color: #27500a;">★★★★☆</td>
+        </tr>
+        <tr style="border-top: 1px solid #eee;">
+          <td style="padding: 8px; font-weight:500;">Arbitrum</td>
+          <td style="padding: 8px;">L2</td>
+          <td style="padding: 8px;">$0.01–0.1</td>
+          <td style="padding: 8px;">~1s</td>
+          <td style="padding: 8px; color: #27500a;">★★★★☆</td>
+        </tr>
+        <tr style="border-top: 1px solid #eee; background: #f8fbff;">
+          <td style="padding: 8px; font-weight:500;">Base</td>
+          <td style="padding: 8px;">L2</td>
+          <td style="padding: 8px;">$0.001–0.05</td>
+          <td style="padding: 8px;">~2s</td>
+          <td style="padding: 8px; color: #633806;">★★★☆☆</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ===== L1 vs L2 ===== -->
+<div id="l1l2" class="section">
+  <h2>L1 vs L2 — ¿Qué son y por qué existen las dos?</h2>
+  <p>Esta sección resume toda la conversación que tuvimos sobre L1 y L2, con las analogías que usamos para aclarar cada pregunta.</p>
+
+  <div class="card">
+    <div class="card-label">¿Qué es L1?</div>
+    <p style="font-size:14px;color:#444;margin-bottom:8px;"><strong>L1 es la blockchain principal.</strong> Ethereum, Bitcoin. Es donde vive la seguridad real: miles de validadores en todo el mundo verifican todo, nada se puede cambiar sin consenso global.</p>
+    <p style="font-size:14px;color:#444;margin-bottom:8px;">El problema: esa seguridad tiene costo. Ethereum L1 procesa ~15 transacciones por segundo. Visa procesa ~24.000. Y cada tx cuesta $5-$50 de gas.</p>
+    <div class="info-box">
+      <strong>Analogía:</strong> L1 es el <strong>Registro de la Propiedad oficial del Estado</strong>. Cada inscripción es cara y tarda, pero lo que está ahí es definitivo e inatacable legalmente.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿Qué es L2?</div>
+    <p style="font-size:14px;color:#444;margin-bottom:8px;"><strong>L2 es una red separada construida encima de L1.</strong> Procesa transacciones rápido y barato, y periódicamente le publica un resumen comprimido a L1.</p>
+    <p style="font-size:14px;color:#444;margin-bottom:0;">L2 <strong>no le pide dinero prestado a L1</strong>. Opera de forma independiente y simplemente reporta lo que hizo. L1 es el archivo histórico irrefutable, no el ejecutor.</p>
+    <div class="info-box" style="margin-top:12px;">
+      <strong>Analogía:</strong> L2 es una <strong>escribanía privada de confianza</strong>. Procesa cientos de operaciones por hora internamente, y cada cierto tiempo va al Registro del Estado (L1) y publica un resumen notarial. Más rápida y barata, pero su validez final viene del respaldo del Estado.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿L2 da tokens que después cobra L1? — Error común</div>
+    <div class="warn-box" style="margin-bottom:12px;">
+      <strong>INCORRECTO ❌</strong><br>
+      "L2 promete tokens → L1 ejecuta y te los da realmente"
+    </div>
+    <div class="info-box">
+      <strong>CORRECTO ✓</strong><br>
+      "L2 te da tokens realmente → L1 archiva el registro histórico"
+    </div>
+    <p style="font-size:14px;color:#444;margin-top:12px;">Cuando comprás tokens en Polygon, Polygon actualiza SU base de datos distribuida. Cientos de nodos de Polygon replican ese estado. Ya son tuyos. L1 no ejecuta nada después, solo recibe el resumen como backup verificable.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿Por qué L2 es más rápida?</div>
+    <p style="font-size:14px;color:#444;margin-bottom:8px;">L2 es más rápida porque <strong>no usa PoW ni PoS para confirmar tus transacciones</strong>. Tiene un <strong>sequencer</strong>: un servidor que tiene el poder de ordenar y ejecutar transacciones directamente, sin carrera de nonces, sin sorteo de validadores, sin consenso global.</p>
+    <div class="info-box">
+      <strong>Analogía:</strong> L1 es una <strong>asamblea vecinal</strong> donde 1000 personas votan antes de tomar cualquier decisión. Democrático y seguro, pero lento.<br><br>
+      L2 es un <strong>gerente de empresa</strong> con autoridad para decidir solo, en el momento. Rápido y eficiente, pero concentra poder en una sola entidad.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Los dos tiempos de L2 — la confusión más común</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Hay dos tiempos distintos y es clave no mezclarlos:</p>
+    <table style="width:100%;font-size:13px;border-collapse:collapse;">
+      <tr style="background:#f5f5f0;">
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">Tiempo</th>
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">Qué es</th>
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">Cuánto tarda</th>
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">Depende de L1</th>
+      </tr>
+      <tr style="border-top:1px solid #eee;">
+        <td style="padding:8px;font-weight:500;">Confirmación L2</td>
+        <td style="padding:8px;">El sequencer ejecutó tu tx internamente</td>
+        <td style="padding:8px;color:#27500a;">1-2 segundos</td>
+        <td style="padding:8px;color:#791f1f;">No</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;background:#f8f8f4;">
+        <td style="padding:8px;font-weight:500;">Finalidad en L1</td>
+        <td style="padding:8px;">El batch se publicó en Ethereum</td>
+        <td style="padding:8px;color:#633806;">20 min - horas</td>
+        <td style="padding:8px;color:#27500a;">Sí</td>
+      </tr>
+    </table>
+    <p style="font-size:13px;color:#444;margin-top:12px;">Para tu proyecto: los inversores compran tokens, los transfieren, cobran rentas → todo con confirmación L2 en segundos. Solo al hacer <em>bridging</em> (sacar tokens de la L2 a Ethereum mainnet) esperan la finalidad de L1.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿Por qué existe L1 si L2 es mejor en todo?</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Porque L2 requiere <strong>confiar en que el sequencer es honesto</strong>. Un sequencer corrupto puede censurar tu transacción, reordenarlas para beneficiarse, o simplemente apagarse.</p>
+    <div class="info-box">
+      <strong>Analogía:</strong> L1 es el <strong>sistema judicial del Estado</strong>. Lento y caro, pero no depende de que un juez específico sea honesto. L2 es un <strong>árbitro privado</strong>: rápido y barato, pero si es corrupto o desaparece, tenés un problema.<br><br>
+      Por eso existe L1: cuando hay mucho en juego, necesitás algo que no dependa de la honestidad de una sola entidad.
+    </div>
+    <p style="font-size:14px;color:#444;margin-top:10px;">L2 hereda su seguridad de L1. Sin L1, L2 es solo "un servidor con base de datos". Con L1 de respaldo, L2 tiene garantías matemáticas verificables por cualquier persona en el mundo.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Comparativa completa</div>
+    <table style="width:100%;font-size:12px;border-collapse:collapse;">
+      <tr style="background:#f5f5f0;">
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;"></th>
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">L1 (Ethereum)</th>
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">L2 (Polygon/Arbitrum)</th>
+      </tr>
+      <tr style="border-top:1px solid #eee;">
+        <td style="padding:8px;color:#555;">Tiempo de confirmación</td>
+        <td style="padding:8px;">12s - horas</td>
+        <td style="padding:8px;color:#27500a;">1-2 segundos</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;background:#f8f8f4;">
+        <td style="padding:8px;color:#555;">Costo por tx</td>
+        <td style="padding:8px;">$5 - $50</td>
+        <td style="padding:8px;color:#27500a;">$0.001</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;">
+        <td style="padding:8px;color:#555;">Descentralización</td>
+        <td style="padding:8px;color:#27500a;">Máxima</td>
+        <td style="padding:8px;color:#633806;">Semi (sequencer central)</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;background:#f8f8f4;">
+        <td style="padding:8px;color:#555;">Congestión</td>
+        <td style="padding:8px;color:#791f1f;">Depende del mempool global</td>
+        <td style="padding:8px;color:#27500a;">No, sequencer dedicado</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;">
+        <td style="padding:8px;color:#555;">Seguridad ante catástrofe</td>
+        <td style="padding:8px;color:#27500a;">Autónoma</td>
+        <td style="padding:8px;">Respaldada por L1</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;background:#f8f8f4;">
+        <td style="padding:8px;color:#555;">Para tu proyecto</td>
+        <td style="padding:8px;color:#791f1f;">Muy caro para retail</td>
+        <td style="padding:8px;color:#27500a;">Ideal</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Las 3 capas de tu proyecto</div>
+    <div style="font-size:13px;color:#444;line-height:2;">
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f5f5f0;border-radius:8px;margin-bottom:6px;">
+        <span style="font-size:18px;">⚖️</span>
+        <div><strong>Marco legal CNMV</strong> — protección regulatoria para los inversores</div>
+      </div>
+      <div style="text-align:center;color:#b4b2a9;">↓</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#e6f1fb;border-radius:8px;margin:6px 0;">
+        <span style="font-size:18px;">⚡</span>
+        <div><strong>L2 (Polygon/Arbitrum)</strong> — operación rápida y barata para los usuarios</div>
+      </div>
+      <div style="text-align:center;color:#b4b2a9;">↓</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#eaf3de;border-radius:8px;margin-top:6px;">
+        <span style="font-size:18px;">🔒</span>
+        <div><strong>Ethereum L1</strong> — respaldo matemático irrefutable</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== SEQUENCER ===== -->
+<div id="sequencer" class="section">
+  <h2>Sequencer — ¿Cómo decide qué procesar y en qué orden?</h2>
+  <p>Si L2 no tiene carrera de hardware ni sorteo de validadores, ¿qué define cómo se procesan las transacciones? La respuesta es simple y cercana a tu mundo de backend.</p>
+
+  <div class="card">
+    <div class="card-label">El sequencer es una cola de prioridad</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Sin carrera, sin sorteo. Es básicamente una <strong>PriorityQueue</strong> ordenada por fee, igual a cualquier sistema de colas que ya conocés.</p>
+    <div style="background:#1a1a1a;color:#8ed888;font-family:monospace;font-size:13px;padding:16px;border-radius:8px;line-height:1.8;">
+      <span style="color:#6b9fd4;">// Conceptualmente, esto es el sequencer</span><br>
+      PriorityQueue&lt;Transaction&gt; mempool = <span style="color:#fac775;">new</span> PriorityQueue();<br><br>
+      <span style="color:#6b9fd4;">// Llegan transacciones de usuarios</span><br>
+      mempool.Enqueue(tx, tx.Fee); <span style="color:#6b9fd4;">// mayor fee = mayor prioridad</span><br><br>
+      <span style="color:#6b9fd4;">// Sequencer procesa sin parar</span><br>
+      <span style="color:#fac775;">while</span> (<span style="color:#fac775;">true</span>) {<br>
+      &nbsp;&nbsp;<span style="color:#fac775;">var</span> tx = mempool.Dequeue(); <span style="color:#6b9fd4;">// agarra la de mayor fee</span><br>
+      &nbsp;&nbsp;Execute(tx); &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#6b9fd4;">// ejecuta inmediatamente</span><br>
+      &nbsp;&nbsp;UpdateState(tx); &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#6b9fd4;">// actualiza estado de la L2</span><br>
+      }<br>
+    </div>
+    <div class="info-box" style="margin-top:12px;">
+      <strong>Para vos como backend dev:</strong> el sequencer no es magia. Es un servidor procesando una cola ordenada por fee, igual que cualquier sistema de backend que ya hiciste con .NET + una PriorityQueue o una tabla de Postgres con ORDER BY fee DESC.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿Por qué no necesita PoW ni PoS?</div>
+    <p style="font-size:14px;color:#444;margin-bottom:8px;">Toda la complejidad de PoW y PoS existe por una sola razón: <strong>nadie confía en nadie</strong> en L1, y cualquiera puede mentir. Entonces se inventaron mecanismos matemáticos y económicos para forzar honestidad sin un árbitro central.</p>
+    <p style="font-size:14px;color:#444;margin-bottom:0;">En L2 hay un árbitro central: el sequencer. Entonces no necesitás nada de eso.</p>
+    <table style="width:100%;font-size:13px;border-collapse:collapse;margin-top:12px;">
+      <tr style="background:#f5f5f0;">
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;"></th>
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">L1</th>
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">L2</th>
+      </tr>
+      <tr style="border-top:1px solid #eee;">
+        <td style="padding:8px;color:#555;">¿Quién decide el orden?</td>
+        <td style="padding:8px;">El que gana la carrera (PoW/PoS)</td>
+        <td style="padding:8px;color:#27500a;">El sequencer (cola por fee)</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;background:#f8f8f4;">
+        <td style="padding:8px;color:#555;">¿Hay consenso?</td>
+        <td style="padding:8px;">Sí, miles de nodos</td>
+        <td style="padding:8px;">No para confirmar, sí para replicar</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;">
+        <td style="padding:8px;color:#555;">¿Se puede censurar una tx?</td>
+        <td style="padding:8px;color:#27500a;">Prácticamente imposible</td>
+        <td style="padding:8px;color:#791f1f;">Sí, el sequencer puede ignorarla</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;background:#f8f8f4;">
+        <td style="padding:8px;color:#555;">Velocidad</td>
+        <td style="padding:8px;color:#791f1f;">Lenta (carrera/sorteo global)</td>
+        <td style="padding:8px;color:#27500a;">Inmediata (servidor local)</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-label">La ironía que vale recordar</div>
+    <div style="background:#f5f5f0;border-radius:8px;padding:14px;font-size:14px;color:#444;line-height:1.7;border-left:3px solid #1a1a1a;">
+      L2 es básicamente una <strong>base de datos centralizada con una cola de prioridad</strong>, que periódicamente le hace un <strong>backup verificable</strong> a una blockchain descentralizada.<br><br>
+      Técnicamente no es tan distinto de lo que harías con <strong>.NET + Postgres + una tabla de transacciones ordenada por fee</strong>. La diferencia es que el backup va a Ethereum y es matemáticamente auditable por cualquier persona en el mundo.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Conexión con la Opción A de tu proyecto</div>
+    <p style="font-size:14px;color:#444;margin-bottom:8px;">¿Recordás la Opción A del documento original? "Tokens en Postgres, la plataforma es el ledger." Eso es conceptualmente lo mismo que un sequencer de L2:</p>
+    <table style="width:100%;font-size:13px;border-collapse:collapse;">
+      <tr style="background:#f5f5f0;">
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;"></th>
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">Opción A (off-chain)</th>
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">L2</th>
+      </tr>
+      <tr style="border-top:1px solid #eee;">
+        <td style="padding:8px;color:#555;">¿Quién ejecuta?</td>
+        <td style="padding:8px;">Tu servidor .NET</td>
+        <td style="padding:8px;">El sequencer</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;background:#f8f8f4;">
+        <td style="padding:8px;color:#555;">¿Dónde guarda estado?</td>
+        <td style="padding:8px;">Postgres</td>
+        <td style="padding:8px;">Base de datos de la L2</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;">
+        <td style="padding:8px;color:#555;">¿Backup público?</td>
+        <td style="padding:8px;color:#791f1f;">No, solo auditoría interna</td>
+        <td style="padding:8px;color:#27500a;">Sí, en Ethereum L1</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;background:#f8f8f4;">
+        <td style="padding:8px;color:#555;">¿Auditable por inversores?</td>
+        <td style="padding:8px;color:#791f1f;">Solo si vos los dejás</td>
+        <td style="padding:8px;color:#27500a;">Sí, cualquiera puede verificar</td>
+      </tr>
+    </table>
+    <p style="font-size:13px;color:#444;margin-top:10px;">Esa diferencia de auditoría pública es exactamente lo que le da valor a la Opción B frente a la A, y por qué algunos clientes exigen blockchain real aunque sea más cara.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿Qué pasa si el sequencer se cae?</div>
+    <p style="font-size:14px;color:#444;margin-bottom:8px;">Las L2 serias tienen un mecanismo de escape: si el sequencer desaparece por más de cierto tiempo, los usuarios pueden publicar sus transacciones <strong>directamente en L1</strong> sin pasar por la L2. Es el "plan B" de descentralización.</p>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <div style="flex:1;background:#eaf3de;border-radius:8px;padding:12px;font-size:13px;color:#27500a;">
+        <strong>Situación normal</strong><br><br>
+        Usuario → Sequencer → L2 → batch → L1
+      </div>
+      <div style="flex:1;background:#faeeda;border-radius:8px;padding:12px;font-size:13px;color:#633806;">
+        <strong>Sequencer caído</strong><br><br>
+        Usuario → directamente → L1<br>
+        (más lento y caro, pero funciona)
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== ORPHAN ===== -->
+<div id="orphan" class="section">
+  <h2>Bloques huérfanos: cuando dos mineros ganan al mismo tiempo</h2>
+  <p>Imaginá que dos mineros en distintos continentes encuentran un nonce válido casi simultáneamente. Los dos publican su bloque a la red. Por unos segundos, la red tiene dos versiones válidas del siguiente bloque. ¿Cuál gana?</p>
+  <p><strong>La regla:</strong> gana la cadena que más rápido acumule el bloque siguiente. Los nodos empiezan a trabajar sobre el bloque que recibieron primero. El que reciba el bloque posterior primero, esa rama se convierte en la canónica. El bloque de la rama perdedora queda "huérfano" — válido matemáticamente, pero descartado por la red.</p>
+
+  <div class="card">
+    <div class="card-label">Visualización de fork y resolución</div>
+
+    <p style="font-size: 13px; color: #444; margin-bottom: 12px;">Situación: los bloques 1, 2 y 3 son historia consensuada. En el bloque 4 hay una bifurcación.</p>
+
+    <div class="chain-row">
+      <div class="blk main">#1</div><div class="arrow">→</div>
+      <div class="blk main">#2</div><div class="arrow">→</div>
+      <div class="blk main">#3</div><div class="arrow">→</div>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <div class="blk pending">#4A <span class="fork-label">(Minero Europa)</span></div>
+          <div class="arrow">→</div>
+          <div class="blk main" id="winner-block">#5 ganador</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <div class="blk orphan">#4B <span class="fork-label">(Minero Asia)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top: 14px;">
+      El bloque #5 llegó antes sobre la rama A. Todos los nodos que estaban trabajando sobre la rama B reciben el bloque #5 de A, ven que la rama A es más larga, y abandonan la B. El bloque #4B queda huérfano. Las transacciones que estaban en #4B pero no en #4A vuelven al mempool para incluirse en un bloque futuro.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Implicación crítica: confirmaciones</div>
+    <p style="font-size: 13px; color: #444; margin-bottom: 10px;">Por eso en blockchain no alcanza con que tu transacción esté en un bloque. Necesitás esperar <strong>N confirmaciones</strong> (N bloques construidos encima del tuyo). Cuantos más bloques encima, más costoso y difícil sería revertir tu transacción.</p>
+    <table style="width:100%; font-size: 12px; border-collapse: collapse;">
+      <tr style="background: #f5f5f0;">
+        <th style="padding: 7px 8px; text-align:left; font-weight:500; color:#555;">Confirmaciones</th>
+        <th style="padding: 7px 8px; text-align:left; font-weight:500; color:#555;">Uso típico</th>
+        <th style="padding: 7px 8px; text-align:left; font-weight:500; color:#555;">Tiempo en ETH</th>
+      </tr>
+      <tr style="border-top: 1px solid #eee;">
+        <td style="padding: 7px 8px;">1</td>
+        <td style="padding: 7px 8px;">Transacciones de bajo valor</td>
+        <td style="padding: 7px 8px;">~12 seg</td>
+      </tr>
+      <tr style="border-top: 1px solid #eee; background: #f8f8f4;">
+        <td style="padding: 7px 8px;">6</td>
+        <td style="padding: 7px 8px;">Exchanges, compras medianas</td>
+        <td style="padding: 7px 8px;">~1.5 min</td>
+      </tr>
+      <tr style="border-top: 1px solid #eee;">
+        <td style="padding: 7px 8px;">12–20</td>
+        <td style="padding: 7px 8px;"><strong>Compra de tokens / activos</strong></td>
+        <td style="padding: 7px 8px;">~4 min</td>
+      </tr>
+      <tr style="border-top: 1px solid #eee; background: #f8f8f4;">
+        <td style="padding: 7px 8px;">64+</td>
+        <td style="padding: 7px 8px;">Transacciones de alto valor</td>
+        <td style="padding: 7px 8px;">~13 min</td>
+      </tr>
+    </table>
+    <div class="warn-box" style="margin-top: 12px;">
+      <strong>Para tu proyecto:</strong> cuando un inversor compra tokens, tu plataforma no debe acreditar la compra hasta tener mínimo 12 confirmaciones. Mostrar "transacción pendiente" al usuario durante ese tiempo y acreditar los tokens solo cuando alcance el umbral de confirmaciones configurado. Si no hacés esto, un atacante podría hacer un double-spend.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿Qué es exactamente una confirmación?</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">
+      <strong>Una confirmación = un bloque nuevo agregado después del tuyo. Nada más.</strong><br>
+      No es un proceso especial, no es una votación, no es nada mágico. Es literalmente contar cuántos bloques se construyeron encima del bloque que contiene tu transacción.
+    </p>
+    <div style="background:#1a1a1a;color:#8ed888;font-family:monospace;font-size:13px;padding:16px;border-radius:8px;line-height:2;">
+      Bloque #500 &nbsp;← <span style="color:#fac775;">tu tx está acá, fue aceptado</span><br>
+      Bloque #501 &nbsp;← 1 confirmación<br>
+      Bloque #502 &nbsp;← 2 confirmaciones<br>
+      Bloque #503 &nbsp;← 3 confirmaciones<br>
+      Bloque #504 &nbsp;← 4 confirmaciones<br>
+      Bloque #505 &nbsp;← 5 confirmaciones<br>
+      Bloque #506 &nbsp;← 6 confirmaciones<br>
+      Bloque #507 &nbsp;← 7 confirmaciones<br>
+      Bloque #508 &nbsp;← 8 confirmaciones<br>
+      Bloque #509 &nbsp;← 9 confirmaciones<br>
+      Bloque #510 &nbsp;← 10 confirmaciones<br>
+      Bloque #511 &nbsp;← 11 confirmaciones<br>
+      Bloque #512 &nbsp;← <span style="color:#fac775;">12 confirmaciones ✓ seguro</span>
+    </div>
+    <p style="font-size:13px;color:#444;margin-top:10px;">
+      Esos 11 bloques posteriores no tienen nada que ver con tu transacción. Son bloques normales de otras personas. El simple hecho de que existan y estén encadenados después del tuyo es lo que te da seguridad.
+    </p>
+    <div class="info-box" style="margin-top:10px;">
+      <strong>En una frase:</strong> tu bloque (#500) + 11 bloques consecutivos después = 12 confirmaciones. La red no "confirma tu transacción" activamente. La red sigue funcionando y agregando bloques, y vos contás cuántos cayeron después del tuyo.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Analogía del cemento — por qué más bloques = más seguro</div>
+    <p style="font-size:14px;color:#444;margin-bottom:12px;">Tu transacción es una baldosa recién puesta. Cada bloque nuevo que se construye encima es una capa de cemento.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:#888;margin-bottom:6px;">Recién puesta</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+          <div style="background:#faeeda;border:1px solid #ba7517;border-radius:4px;padding:6px 12px;font-size:12px;color:#633806;width:100%;text-align:center;">baldosa</div>
+        </div>
+        <div style="font-size:11px;color:#791f1f;margin-top:6px;">fácil de levantar</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:#888;margin-bottom:6px;">6 confirmaciones</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+          <div style="background:#d3d1c7;border-radius:4px;padding:4px 12px;font-size:11px;color:#444;width:100%;text-align:center;">cemento ×6</div>
+          <div style="background:#faeeda;border:1px solid #ba7517;border-radius:4px;padding:6px 12px;font-size:12px;color:#633806;width:100%;text-align:center;">baldosa</div>
+        </div>
+        <div style="font-size:11px;color:#633806;margin-top:6px;">difícil</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:#888;margin-bottom:6px;">12 confirmaciones</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+          <div style="background:#b4b2a9;border-radius:4px;padding:4px 12px;font-size:11px;color:#fff;width:100%;text-align:center;">cemento ×12</div>
+          <div style="background:#faeeda;border:1px solid #ba7517;border-radius:4px;padding:6px 12px;font-size:12px;color:#633806;width:100%;text-align:center;">baldosa</div>
+        </div>
+        <div style="font-size:11px;color:#27500a;margin-top:6px;">prácticamente imposible</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#444;">Cada capa = trabajo computacional real que costó electricidad o stake. Para "levantar tu baldosa" el atacante tiene que romper todas las capas encima primero, y mientras rompe, la red sigue poniendo capas nuevas más rápido de lo que él puede romper.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿Y si no llegan más bloques?</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Si no llegan más bloques, la red está muerta. Tus confirmaciones se quedan congeladas y nunca llegás al umbral de seguridad.</p>
+    <div style="background:#1a1a1a;color:#8ed888;font-family:monospace;font-size:13px;padding:14px;border-radius:8px;line-height:2;">
+      Bloque #500 &nbsp;← tu tx<br>
+      Bloque #501 &nbsp;← 1 confirmación<br>
+      Bloque #502 &nbsp;← 2 confirmaciones<br>
+      <span style="color:#e24b4a;">... la red se muere acá</span><br>
+      <span style="color:#888;">= nunca llegás a 12 confirmaciones</span><br>
+      <span style="color:#888;">= tu plataforma nunca acredita los tokens</span>
+    </div>
+    <div class="info-box" style="margin-top:10px;">
+      <strong>En Ethereum o Polygon esto no pasa.</strong> Ethereum tiene más de un millón de validadores con capital bloqueado. Polygon lleva años con miles de transacciones por segundo. El riesgo real no es "red muerta" sino <strong>congestión</strong>: la red sigue viva pero las confirmaciones llegan más lento. Tu plataforma muestra "Confirmando... 3/12" por más tiempo. Nada se rompe, solo hay demora.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Por qué las confirmaciones suman tiempo — y cómo L2 lo resuelve</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Acá está la conexión directa entre confirmaciones, velocidad y por qué usás L2. Cada confirmación = un bloque nuevo. Cada bloque tarda un tiempo fijo en producirse. Entonces:</p>
+    <table style="width:100%;font-size:13px;border-collapse:collapse;">
+      <tr style="background:#f5f5f0;">
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">Red</th>
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">Tiempo por bloque</th>
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">12 confirmaciones</th>
+        <th style="padding:8px;text-align:left;font-weight:500;color:#555;">Experiencia usuario</th>
+      </tr>
+      <tr style="border-top:1px solid #eee;">
+        <td style="padding:8px;font-weight:500;">Bitcoin L1</td>
+        <td style="padding:8px;">~10 minutos</td>
+        <td style="padding:8px;color:#791f1f;">~2 horas</td>
+        <td style="padding:8px;color:#791f1f;">Inaceptable para retail</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;background:#f8f8f4;">
+        <td style="padding:8px;font-weight:500;">Ethereum L1</td>
+        <td style="padding:8px;">~12 segundos</td>
+        <td style="padding:8px;color:#633806;">~2.5 minutos</td>
+        <td style="padding:8px;color:#633806;">Tolerable pero lento</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;">
+        <td style="padding:8px;font-weight:500;">Polygon L2</td>
+        <td style="padding:8px;">~2 segundos</td>
+        <td style="padding:8px;color:#27500a;">~24 segundos</td>
+        <td style="padding:8px;color:#27500a;">Excelente para retail</td>
+      </tr>
+      <tr style="border-top:1px solid #eee;background:#f8f8f4;">
+        <td style="padding:8px;font-weight:500;">Arbitrum L2</td>
+        <td style="padding:8px;">~1 segundo</td>
+        <td style="padding:8px;color:#27500a;">~12 segundos</td>
+        <td style="padding:8px;color:#27500a;">Casi instantáneo</td>
+      </tr>
+    </table>
+    <div class="info-box" style="margin-top:12px;">
+      <strong>La conclusión práctica:</strong> L2 no solo es más barata. Es más rápida porque sus bloques se producen más seguido, entonces acumulás 12 confirmaciones en segundos en vez de minutos. Un inversor en tu plataforma sobre Polygon ve sus tokens acreditados en ~24 segundos. En Ethereum L1 esperaría 2.5 minutos. En Bitcoin esperaría 2 horas.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Los estados de una transacción en tu plataforma</div>
+    <p style="font-size:14px;color:#444;margin-bottom:12px;">Tu backend tiene que manejar estos cuatro estados y mostrarle al usuario el correcto en cada momento:</p>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:#f5f5f0;border-radius:8px;">
+        <div style="background:#b4b2a9;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;">1</div>
+        <div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:2px;">Enviada</div>
+          <div style="font-size:12px;color:#666;">Existe en el mempool. No está en ningún bloque.</div>
+          <div style="font-size:12px;color:#791f1f;margin-top:2px;">UI: "Procesando tu compra..." — No acreditás nada.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:#faeeda;border-radius:8px;">
+        <div style="background:#ba7517;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;">2</div>
+        <div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:2px;">En bloque (sin confirmar)</div>
+          <div style="font-size:12px;color:#666;">Entró en un bloque pero tiene menos de 12 confirmaciones.</div>
+          <div style="font-size:12px;color:#633806;margin-top:2px;">UI: "Confirmando... (3/12)" — No acreditás nada todavía.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:#eaf3de;border-radius:8px;">
+        <div style="background:#27500a;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;">3</div>
+        <div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:2px;">Confirmada ✓</div>
+          <div style="font-size:12px;color:#666;">12+ confirmaciones alcanzadas.</div>
+          <div style="font-size:12px;color:#27500a;margin-top:2px;">UI: "✓ Compra completada" — Recién acá acreditás los tokens en BD.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:#fceaea;border-radius:8px;">
+        <div style="background:#791f1f;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;">4</div>
+        <div>
+          <div style="font-size:13px;font-weight:500;margin-bottom:2px;">Fallida</div>
+          <div style="font-size:12px;color:#666;">Rechazada o quedó huérfana.</div>
+          <div style="font-size:12px;color:#791f1f;margin-top:2px;">UI: "La transacción falló, no se realizó ningún cargo" — No acreditás nada.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== EJERCICIO ===== -->
+<div id="ejercicio" class="section">
+  <h2>Ejercicio de la Sección 2</h2>
+  <p>Tres preguntas para validar que integraste los conceptos. Respondeme en el chat.</p>
+
+  <div class="exercise">
+    <div class="exercise-title">Pregunta 1 — SHA-256 y tu proyecto</div>
+    <ol>
+      <li>En el módulo SHA-256, editá el texto A para que diga "Alice paga 100" y el texto B para que diga "Alice paga 100." (con un punto al final). ¿Cuántos bits cambiaron? ¿Qué te dice eso sobre la seguridad de las firmas de transacciones?</li>
+    </ol>
+  </div>
+
+  <div class="exercise" style="margin-top: 12px;">
+    <div class="exercise-title">Pregunta 2 — Minado y dificultad</div>
+    <ol>
+      <li>Andá al módulo Minado. Minás con dificultad 2 y anotá los intentos. Después minás con dificultad 3 y anotás los intentos. ¿Cuántas veces más intentos necesitó la dificultad 3? ¿Por qué el número no es exactamente 16x sino aproximado?</li>
+    </ol>
+  </div>
+
+  <div class="exercise" style="margin-top: 12px;">
+    <div class="exercise-title">Pregunta 3 — Diseño de sistema (la más importante)</div>
+    <ol>
+      <li>En la plataforma de tokenización inmobiliaria, un inversor compra 1000 tokens por €1000. La transacción entra en la blockchain. ¿En qué estados puede estar esa transacción desde que se envía hasta que es "segura"? Describí el flujo completo con los conceptos de esta sección: mempool → bloque → confirmaciones. ¿Cómo le mostrás ese progreso al usuario en la UI sin mentirle sobre el estado real?</li>
+    </ol>
+  </div>
+
+  <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #d3d1c7; font-size: 13px; color: #666;">
+    Cuando respondas estas tres preguntas, pasamos a la Sección 3: Criptografía aplicada (clave pública/privada, ECC, firmas digitales, wallets). Ahí vas a entender cómo funciona la identidad en blockchain y cómo se conecta con el KYC de tu proyecto.
+  </div>
+</div>
+
+
+<script>
+// ===== NAVIGATION =====
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = ['sha256','mining','mempool','consensus','l1l2','sequencer','orphan','ejercicio'].indexOf(id);
+  document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+}
+
+// ===== SHA-256 =====
+async function sha256(t) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function updateSha() {
+  const a = document.getElementById('sha-a').value;
+  const b = document.getElementById('sha-b').value;
+  const ha = await sha256(a);
+  const hb = await sha256(b);
+  document.getElementById('hash-a').textContent = ha;
+  document.getElementById('hash-b').textContent = hb;
+
+  const bitsA = hexToBits(ha);
+  const bitsB = hexToBits(hb);
+  let diff = 0;
+  const row = document.getElementById('bit-diff');
+  row.innerHTML = '';
+  for (let i = 0; i < 256; i++) {
+    const d = document.createElement('div');
+    d.className = 'bit';
+    if (bitsA[i] !== bitsB[i]) { d.className += ' changed'; diff++; }
+    else if (bitsA[i] === '1') d.className += ' on';
+    row.appendChild(d);
+  }
+  document.getElementById('bit-count').textContent =
+    diff + ' de 256 bits cambiaron (' + Math.round(diff/256*100) + '%) — el efecto avalancha en acción';
+}
+
+function hexToBits(hex) {
+  return hex.split('').map(h => parseInt(h, 16).toString(2).padStart(4, '0')).join('').split('');
+}
+
+// ===== MINING =====
+let miningActive = false;
+let miningWorker = null;
+
+async function startMining() {
+  miningActive = true;
+  document.getElementById('mine-btn').disabled = true;
+  const data = document.getElementById('mine-data').value;
+  const diff = parseInt(document.getElementById('mine-diff').value);
+  const target = '0'.repeat(diff);
+  const log = document.getElementById('mine-log');
+  log.innerHTML = 'Buscando hash que empiece con ' + target + '...\n';
+
+  const t0 = performance.now();
+  let nonce = 0;
+  let found = false;
+
+  const BATCH = 500;
+  async function step() {
+    if (!miningActive) { document.getElementById('mine-btn').disabled = false; return; }
+    for (let i = 0; i < BATCH; i++) {
+      const input = data + nonce;
+      const h = await sha256(input);
+      if (h.startsWith(target)) {
+        const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
+        document.getElementById('mine-attempts').textContent = nonce.toLocaleString();
+        document.getElementById('mine-nonce').textContent = nonce;
+        document.getElementById('mine-time').textContent = elapsed + 's';
+        document.getElementById('mine-hash').textContent = h;
+        document.getElementById('mine-hash').className = 'hash-display match';
+        document.getElementById('mine-progress').style.width = '100%';
+        log.innerHTML += '<span class="found">✓ ENCONTRADO! nonce=' + nonce + ' intentos=' + nonce.toLocaleString() + ' tiempo=' + elapsed + 's</span>\n';
+        log.innerHTML += 'Hash: ' + h + '\n';
+        log.scrollTop = log.scrollHeight;
+        document.getElementById('mine-btn').disabled = false;
+        miningActive = false;
+        return;
+      }
+      nonce++;
+    }
+    document.getElementById('mine-attempts').textContent = nonce.toLocaleString();
+    const prog = Math.min(99, (nonce / Math.pow(16, diff)) * 100 * 0.7);
+    document.getElementById('mine-progress').style.width = prog.toFixed(1) + '%';
+    if (nonce % 5000 === 0) {
+      log.innerHTML += 'Intentando nonce ' + nonce.toLocaleString() + '...\n';
+      log.scrollTop = log.scrollHeight;
+    }
+    requestAnimationFrame(step);
+  }
+  document.getElementById('mine-hash').textContent = 'Minando...';
+  document.getElementById('mine-hash').className = 'hash-display';
+  document.getElementById('mine-progress').style.width = '5%';
+  requestAnimationFrame(step);
+}
+
+function stopMining() {
+  miningActive = false;
+  document.getElementById('mine-btn').disabled = false;
+}
+
+// ===== MEMPOOL =====
+const txTemplates = [
+  { from: 'Alice', to: 'Bob', amount: 50, fee: 80, feeClass: 'fee-high' },
+  { from: 'Bob', to: 'Carol', amount: 120, fee: 60, feeClass: 'fee-high' },
+  { from: 'Dave', to: 'Eve', amount: 5, fee: 10, feeClass: 'fee-low' },
+  { from: 'Frank', to: 'Grace', amount: 200, fee: 45, feeClass: 'fee-med' },
+  { from: 'Hiro', to: 'Investor', amount: 1000, fee: 90, feeClass: 'fee-high' },
+  { from: 'Investor', to: 'Token', amount: 500, fee: 5, feeClass: 'fee-low' },
+  { from: 'Maria', to: 'Pool', amount: 30, fee: 35, feeClass: 'fee-med' },
+  { from: 'Carlos', to: 'SPV', amount: 750, fee: 70, feeClass: 'fee-high' },
+];
+
+let poolTxs = [];
+let blockTxs = [];
+let txIdCounter = 0;
+
+function resetMempool() {
+  poolTxs = txTemplates.slice(0, 5).map((t, i) => ({ ...t, id: i }));
+  blockTxs = [];
+  txIdCounter = 5;
+  renderMempool();
+}
+
+function addRandomTx() {
+  const t = txTemplates[Math.floor(Math.random() * txTemplates.length)];
+  poolTxs.push({ ...t, id: txIdCounter++, fee: Math.floor(Math.random() * 100) + 5 });
+  renderMempool();
+}
+
+function toggleTx(id) {
+  const inBlock = blockTxs.findIndex(t => t.id === id);
+  if (inBlock >= 0) {
+    poolTxs.push(blockTxs.splice(inBlock, 1)[0]);
+  } else {
+    if (blockTxs.length >= 4) {
+      document.getElementById('mem-tip').textContent = 'El bloque está lleno (máx. 4 txs). Sacá una para agregar otra.';
+      return;
+    }
+    const inPool = poolTxs.findIndex(t => t.id === id);
+    if (inPool >= 0) blockTxs.push(poolTxs.splice(inPool, 1)[0]);
+  }
+  document.getElementById('mem-tip').textContent = '';
+  renderMempool();
+}
+
+function confirmBlock() {
+  if (blockTxs.length === 0) {
+    document.getElementById('mem-tip').textContent = 'Seleccioná al menos una transacción del mempool para incluir en el bloque.';
+    return;
+  }
+  const totalFee = blockTxs.reduce((a, t) => a + t.fee, 0);
+  const maxFee = txTemplates.reduce((a, t) => a + t.fee, 0);
+  const missed = poolTxs.reduce((a, t) => a + t.fee, 0);
+  document.getElementById('mem-tip').innerHTML =
+    '✓ Bloque confirmado. Ganaste <strong>' + totalFee + ' gwei</strong> de fee. ' +
+    'Dejaste ' + missed + ' gwei en el mempool. ' +
+    (missed > 0 ? 'La próxima vez priorizá las transacciones con mayor fee.' : '¡Maximizaste el fee!');
+  blockTxs.forEach(t => t.confirmed = true);
+  poolTxs = [...poolTxs];
+  blockTxs = [];
+  renderMempool();
+  setTimeout(() => {
+    poolTxs = poolTxs.filter(t => !t.confirmed);
+    renderMempool();
+  }, 2000);
+}
+
+function renderMempool() {
+  const pool = document.getElementById('mempool-pool');
+  const block = document.getElementById('mempool-block');
+  pool.innerHTML = '';
+  block.innerHTML = '';
+  poolTxs.forEach(t => {
+    const el = makeTx(t, false);
+    pool.appendChild(el);
+  });
+  blockTxs.forEach(t => {
+    const el = makeTx(t, true);
+    block.appendChild(el);
+  });
+  const totalFee = blockTxs.reduce((a, t) => a + t.fee, 0);
+  document.getElementById('mem-fee').textContent = totalFee + ' gwei';
+  document.getElementById('mem-count').textContent = blockTxs.length + ' / 4';
+}
+
+function makeTx(t, selected) {
+  const el = document.createElement('div');
+  el.className = 'tx' + (selected ? ' selected' : '') + (t.confirmed ? ' confirmed' : '');
+  el.innerHTML =
+    '<span>' + t.from + ' → ' + t.to + '</span>' +
+    '<span class="tx-fee ' + t.feeClass + '">' + t.fee + ' gwei</span>';
+  if (!t.confirmed) el.onclick = () => toggleTx(t.id);
+  return el;
+}
+
+resetMempool();
+
+// ===== INIT =====
+updateSha();
+</script>
+</body>
+</html>

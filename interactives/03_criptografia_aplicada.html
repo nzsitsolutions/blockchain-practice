@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sección 3 — Criptografía Aplicada</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f5f5f0;
+  color: #1a1a1a;
+  padding: 1.5rem 1rem 3rem;
+  max-width: 740px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+.nav {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.nav-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  background: #fff;
+  border: 1px solid #d3d1c7;
+  border-radius: 20px;
+  cursor: pointer;
+  color: #444;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.nav-btn:hover { background: #eee; }
+.nav-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.section { display: none; }
+.section.active { display: block; }
+h1 { font-size: 20px; font-weight: 500; margin-bottom: 0.4rem; }
+h2 { font-size: 17px; font-weight: 500; margin: 1.5rem 0 0.5rem; }
+.subtitle { font-size: 13px; color: #666; margin-bottom: 1.5rem; }
+p { font-size: 14px; color: #444; margin-bottom: 0.75rem; line-height: 1.65; }
+strong { font-weight: 500; color: #1a1a1a; }
+.card {
+  background: #fff;
+  border: 1px solid #d3d1c7;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.card-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #888;
+  margin-bottom: 10px;
+}
+.info-box {
+  background: #e6f1fb;
+  color: #0c447c;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 12px 0;
+  border-left: 3px solid #378add;
+  line-height: 1.6;
+}
+.warn-box {
+  background: #faeeda;
+  color: #633806;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 12px 0;
+  border-left: 3px solid #ba7517;
+  line-height: 1.6;
+}
+.danger-box {
+  background: #fceaea;
+  color: #791f1f;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 12px 0;
+  border-left: 3px solid #e24b4a;
+  line-height: 1.6;
+}
+.success-box {
+  background: #eaf3de;
+  color: #27500a;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 12px 0;
+  border-left: 3px solid #97c459;
+  line-height: 1.6;
+}
+input[type=text], textarea {
+  font-family: inherit;
+  font-size: 14px;
+  padding: 8px 12px;
+  border: 1px solid #d3d1c7;
+  border-radius: 8px;
+  background: #fff;
+  color: #1a1a1a;
+  width: 100%;
+}
+input[type=text]:focus, textarea:focus { outline: 2px solid #378add; outline-offset: -1px; }
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field label { font-size: 13px; color: #555; font-weight: 500; }
+.mono {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  word-break: break-all;
+  background: #f5f5f0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #1a1a1a;
+  line-height: 1.6;
+  border: 1px solid #e8e8e4;
+}
+.mono.success { background: #eaf3de; color: #27500a; border-color: #97c459; }
+.mono.danger { background: #fceaea; color: #791f1f; border-color: #f09595; }
+.code-block {
+  background: #1a1a1a;
+  color: #8ed888;
+  font-family: monospace;
+  font-size: 13px;
+  padding: 16px;
+  border-radius: 8px;
+  line-height: 1.8;
+  margin: 10px 0;
+}
+.code-block .c { color: #6b9fd4; }
+.code-block .k { color: #fac775; }
+.code-block .s { color: #f8a97a; }
+button.primary {
+  padding: 9px 18px;
+  font-size: 14px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+button.primary:hover { opacity: 0.85; }
+button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+button.secondary {
+  padding: 8px 14px;
+  font-size: 13px;
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #d3d1c7;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+}
+button.secondary:hover { background: #f5f5f0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { padding: 8px; text-align: left; font-weight: 500; color: #555; background: #f5f5f0; }
+td { padding: 8px; border-top: 1px solid #eee; color: #444; }
+tr:nth-child(even) td { background: #f8f8f4; }
+.exercise {
+  background: #fff;
+  border: 2px solid #1a1a1a;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 16px;
+}
+.exercise-title { font-size: 14px; font-weight: 500; margin-bottom: 10px; }
+.exercise ol { padding-left: 18px; }
+.exercise li { font-size: 13px; color: #444; margin-bottom: 8px; line-height: 1.6; }
+.step-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.step-num {
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.key-visual {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  margin: 12px 0;
+}
+.key-box {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.key-box.private { background: #fceaea; border: 1px solid #f09595; }
+.key-box.public  { background: #e6f1fb; border: 1px solid #9ac7ef; }
+.key-box.address { background: #eaf3de; border: 1px solid #97c459; }
+.key-title { font-weight: 500; font-size: 14px; margin-bottom: 6px; }
+.arrow-down { text-align: center; font-size: 20px; color: #b4b2a9; margin: 4px 0; }
+</style>
+</head>
+<body>
+
+<h1>Sección 3 — Criptografía Aplicada</h1>
+<p class="subtitle">Claves privadas · Claves públicas · ECC · Firmas digitales · Wallets · KYC · Custodia</p>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="show('intro')">1 · El problema</button>
+  <button class="nav-btn" onclick="show('keys')">2 · Claves</button>
+  <button class="nav-btn" onclick="show('ecc')">3 · ECC</button>
+  <button class="nav-btn" onclick="show('signatures')">4 · Firmas</button>
+  <button class="nav-btn" onclick="show('wallets')">5 · Wallets</button>
+  <button class="nav-btn" onclick="show('kyc')">6 · KYC y custodia</button>
+  <button class="nav-btn" onclick="show('ejercicio')">Ejercicio</button>
+</nav>
+
+
+<!-- ===== 1. EL PROBLEMA ===== -->
+<div id="intro" class="section active">
+  <h2>El problema que resuelve la criptografía en blockchain</h2>
+  <p>Antes de ver cómo funciona, entendamos <strong>qué problema resuelve</strong>. En una base de datos centralizada (tu Postgres de .NET), la identidad es simple:</p>
+
+  <div class="code-block">
+    <span class="c">-- En una BD centralizada vos controlás quién es quién</span><br>
+    SELECT * FROM users WHERE id = 42 AND password_hash = '...';<br>
+    <span class="c">-- Si el hash coincide, sos vos. Fin.</span><br>
+    <span class="c">-- El servidor es el árbitro de la identidad.</span>
+  </div>
+
+  <p>En blockchain <strong>no hay servidor central</strong>. No hay nadie que pueda decir "sí, ese es Juan". Entonces surge una pregunta fundamental:</p>
+
+  <div style="background:#f5f5f0;border-radius:8px;padding:16px;text-align:center;font-size:16px;font-weight:500;color:#1a1a1a;margin:16px 0;">
+    ¿Cómo probás que una transacción la firmaste vos<br>y no alguien haciéndose pasar por vos?
+  </div>
+
+  <p>La respuesta es <strong>criptografía asimétrica</strong>. En vez de un servidor que guarda tu contraseña, vos tenés dos claves matemáticamente vinculadas:</p>
+
+  <div class="key-visual">
+    <div class="key-box private">
+      <div class="key-title">🔑 Clave privada</div>
+      Solo la sabés vos.<br>
+      La usás para <strong>firmar</strong> transacciones.<br>
+      Nunca sale de tu dispositivo.
+    </div>
+    <div class="key-box public">
+      <div class="key-title">🔓 Clave pública</div>
+      Todo el mundo puede verla.<br>
+      La usan otros para <strong>verificar</strong> que firmaste vos.<br>
+      Se deriva de la privada.
+    </div>
+  </div>
+
+  <div class="info-box">
+    <strong>La analogía del candado:</strong> la clave pública es un candado abierto que repartís a todo el mundo. La clave privada es la llave única que solo tenés vos. Cualquiera puede cerrar el candado (cifrar o verificar), pero solo vos podés abrirlo (firmar). Y matemáticamente es imposible fabricar la llave a partir del candado.
+  </div>
+
+  <div class="card">
+    <div class="card-label">Por qué esto reemplaza al servidor como árbitro de identidad</div>
+    <table>
+      <tr>
+        <th></th>
+        <th>BD centralizada</th>
+        <th>Blockchain</th>
+      </tr>
+      <tr>
+        <td>¿Quién dice "sos vos"?</td>
+        <td>El servidor</td>
+        <td>Las matemáticas</td>
+      </tr>
+      <tr>
+        <td>¿Qué guardás?</td>
+        <td>Usuario + contraseña</td>
+        <td>Clave privada</td>
+      </tr>
+      <tr>
+        <td>¿Qué pasa si el server se cae?</td>
+        <td>No podés autenticarte</td>
+        <td>Tu clave sigue siendo válida</td>
+      </tr>
+      <tr>
+        <td>¿Qué pasa si perdés tu credencial?</td>
+        <td>Reset por email</td>
+        <td>Perdés acceso para siempre</td>
+      </tr>
+      <tr>
+        <td>¿Puede alguien suplantar tu identidad?</td>
+        <td>Sí, si hackean el server</td>
+        <td>Solo si tienen tu clave privada</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+<!-- ===== 2. CLAVES ===== -->
+<div id="keys" class="section">
+  <h2>Clave privada → Clave pública → Dirección</h2>
+  <p>En blockchain tu identidad tiene tres capas. Una se deriva de la otra en una sola dirección, como SHA-256: podés ir de privada a pública a dirección, pero nunca al revés.</p>
+
+  <div class="card">
+    <div class="card-label">Las tres capas de tu identidad en blockchain</div>
+
+    <div class="key-box private" style="margin-bottom:8px;">
+      <div class="key-title">🔑 Clave privada</div>
+      Un número aleatorio de 256 bits. Literalmente.<br>
+      <span style="font-family:monospace;font-size:11px;color:#791f1f;">
+        e9873d79c6d87dc0fb6a5778633389f4453213303da61f20bd67fc233aa33262
+      </span><br><br>
+      <strong>Es tu identidad completa.</strong> Quien tenga esto tiene el control total de tu wallet. No hay recuperación posible si la perdés o alguien la roba.
+    </div>
+
+    <div class="arrow-down">↓ <span style="font-size:13px;color:#888;">ECC (Elliptic Curve) — unidireccional, imposible revertir</span></div>
+
+    <div class="key-box public" style="margin-bottom:8px;">
+      <div class="key-title">🔓 Clave pública</div>
+      Se calcula matemáticamente a partir de la privada.<br>
+      <span style="font-family:monospace;font-size:11px;color:#0c447c;">
+        04bfcab3b7b3a1...d8e4f2a1c9b5e3...
+      </span><br><br>
+      Podés compartirla con todo el mundo. No revela la privada. Se usa para verificar firmas.
+    </div>
+
+    <div class="arrow-down">↓ <span style="font-size:13px;color:#888;">SHA-256 + RIPEMD-160 — unidireccional</span></div>
+
+    <div class="key-box address">
+      <div class="key-title">📍 Dirección (Address)</div>
+      La versión corta y legible de tu clave pública.<br>
+      <span style="font-family:monospace;font-size:12px;color:#27500a;">
+        0x742d35Cc6634C0532925a3b8D4C9E7f3B2a1F8e
+      </span><br><br>
+      Es lo que compartís para recibir tokens. Como un CBU/IBAN pero en blockchain.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">La analogía del DNI</div>
+    <table>
+      <tr>
+        <th>Blockchain</th>
+        <th>Equivalente en el mundo real</th>
+      </tr>
+      <tr>
+        <td>Clave privada</td>
+        <td>Tu huella dactilar — única, no la podés compartir</td>
+      </tr>
+      <tr>
+        <td>Clave pública</td>
+        <td>Tu foto del DNI — identifica quién sos</td>
+      </tr>
+      <tr>
+        <td>Dirección (address)</td>
+        <td>Tu número de DNI — lo compartís para operar</td>
+      </tr>
+    </table>
+    <div class="info-box" style="margin-top:10px;">
+      <strong>La diferencia crítica con el DNI:</strong> si perdés tu DNI, el Estado te da uno nuevo. Si perdés tu clave privada en blockchain, no hay Estado, no hay recuperación, no hay soporte. Tus tokens desaparecen para siempre. Por eso existe la <strong>custodia</strong>, que veremos en la sección 6.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Generá un par de claves real en tu navegador</div>
+    <p style="font-size:13px;color:#444;margin-bottom:12px;">Las claves que se generan abajo son criptográficamente reales. Se generan localmente en tu navegador, nunca salen de tu computadora.</p>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button class="primary" onclick="generateKeys()">Generar par de claves</button>
+    </div>
+    <div class="field">
+      <label>Clave privada (nunca compartir)</label>
+      <div class="mono danger" id="private-key">— presioná "Generar" —</div>
+    </div>
+    <div class="field">
+      <label>Clave pública (derivada de la privada)</label>
+      <div class="mono" id="public-key">—</div>
+    </div>
+    <div class="field">
+      <label>Dirección simulada (hash de la clave pública)</label>
+      <div class="mono success" id="address">—</div>
+    </div>
+    <div class="warn-box">
+      <strong>Nunca uses claves generadas en una web para fondos reales.</strong> Este es solo un ejercicio educativo para entender el concepto.
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== 3. ECC ===== -->
+<div id="ecc" class="section">
+  <h2>ECC — Elliptic Curve Cryptography</h2>
+  <p>ECC es la matemática que hace posible derivar una clave pública de una privada de forma unidireccional. No necesitás entender la matemática profunda, pero sí el concepto que la hace funcionar.</p>
+
+  <div class="card">
+    <div class="card-label">La intuición sin matemática</div>
+    <p style="font-size:14px;color:#444;margin-bottom:8px;">Imaginá que tenés una curva dibujada en un plano. Empezás en un punto fijo llamado <strong>G</strong> (el punto generador, público y conocido por todos).</p>
+    <p style="font-size:14px;color:#444;margin-bottom:8px;">Tu clave privada es un número, digamos <strong>7</strong>. La operación es: "saltá desde G, 7 veces siguiendo las reglas de la curva". El punto donde terminás es tu <strong>clave pública</strong>.</p>
+    <div class="info-box">
+      <strong>¿Por qué es unidireccional?</strong><br>
+      Saltar 7 veces desde G es fácil y rápido. Pero si alguien ve tu punto final (clave pública) y quiere saber cuántos saltos diste (clave privada), tiene que probar 1, 2, 3... hasta encontrarlo. Con claves reales de 256 bits eso son 2²⁵⁶ posibilidades. Imposible computacionalmente aunque uses todas las computadoras del mundo hasta el fin del universo.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Visualización interactiva — la curva elíptica</div>
+    <p style="font-size:13px;color:#444;margin-bottom:10px;">Esta es una curva elíptica simplificada (y² = x³ + 7, la misma que usa Bitcoin — secp256k1). Hacé click en "Sumar punto" para ver cómo se "saltea" por la curva.</p>
+    <canvas id="ecc-canvas" width="500" height="280" style="width:100%;border-radius:8px;background:#1a1a1a;display:block;margin-bottom:10px;"></canvas>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+      <button class="primary" onclick="eccStep()">Sumar punto (1 salto)</button>
+      <button class="secondary" onclick="eccReset()">Reiniciar</button>
+    </div>
+    <div class="mono" id="ecc-info">Punto G (generador): listo para empezar</div>
+    <div class="info-box" style="margin-top:10px;">
+      Cada "salto" en la curva es una operación matemática determinística. Tu clave privada (ej: 7) significa "hacé 7 saltos desde G". La posición final es tu clave pública. Simple de calcular hacia adelante, imposible de revertir.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿Por qué ECC y no RSA?</div>
+    <table>
+      <tr>
+        <th></th>
+        <th>RSA</th>
+        <th>ECC (secp256k1)</th>
+      </tr>
+      <tr>
+        <td>Longitud de clave</td>
+        <td>2048-4096 bits</td>
+        <td>256 bits</td>
+      </tr>
+      <tr>
+        <td>Nivel de seguridad</td>
+        <td>~112 bits</td>
+        <td>~128 bits</td>
+      </tr>
+      <tr>
+        <td>Velocidad de firma</td>
+        <td>Lenta</td>
+        <td>Muy rápida</td>
+      </tr>
+      <tr>
+        <td>Tamaño de firma</td>
+        <td>Grande</td>
+        <td>Pequeña (64 bytes)</td>
+      </tr>
+      <tr>
+        <td>Uso en blockchain</td>
+        <td>No</td>
+        <td>Bitcoin, Ethereum, todos</td>
+      </tr>
+    </table>
+    <p style="font-size:13px;color:#444;margin-top:10px;">ECC ofrece más seguridad con claves más cortas. En blockchain cada byte cuenta porque todo se guarda en miles de nodos para siempre. Una firma RSA de 512 bytes vs una ECC de 64 bytes multiplica el costo de almacenamiento por 8x en toda la red global.</p>
+  </div>
+</div>
+
+
+<!-- ===== 4. FIRMAS ===== -->
+<div id="signatures" class="section">
+  <h2>Firmas digitales — cómo probás que firmaste vos</h2>
+  <p>Una firma digital es la operación que conecta todo: usás tu <strong>clave privada</strong> para firmar un mensaje, y cualquiera puede usar tu <strong>clave pública</strong> para verificar que la firma es auténtica, sin necesitar tu clave privada.</p>
+
+  <div class="card">
+    <div class="card-label">El flujo completo de una transacción firmada</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="step-row" style="background:#fceaea;">
+        <div class="step-num">1</div>
+        <div style="font-size:13px;">
+          <strong>Creás la transacción</strong><br>
+          "Wallet 0xABC envía 100 tokens a wallet 0xDEF, fee 0.001 ETH, nonce 42"
+        </div>
+      </div>
+      <div class="step-row" style="background:#faeeda;">
+        <div class="step-num">2</div>
+        <div style="font-size:13px;">
+          <strong>Hashéas el mensaje</strong><br>
+          SHA-256(datos de la tx) → un hash de 32 bytes
+        </div>
+      </div>
+      <div class="step-row" style="background:#e6f1fb;">
+        <div class="step-num">3</div>
+        <div style="font-size:13px;">
+          <strong>Firmás el hash con tu clave privada</strong><br>
+          firma = ECC_sign(hash, clave_privada)<br>
+          Esto produce una firma de 64 bytes (r, s)
+        </div>
+      </div>
+      <div class="step-row" style="background:#f5f5f0;">
+        <div class="step-num">4</div>
+        <div style="font-size:13px;">
+          <strong>Publicás la tx con la firma adjunta</strong><br>
+          La tx + firma van al mempool. Tu clave privada nunca salió de tu dispositivo.
+        </div>
+      </div>
+      <div class="step-row" style="background:#eaf3de;">
+        <div class="step-num">5</div>
+        <div style="font-size:13px;">
+          <strong>Cualquier nodo verifica</strong><br>
+          ECC_verify(hash, firma, clave_pública) → true/false<br>
+          Si es true: la tx es auténtica. Si es false: rechazada.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Simulador de firma y verificación</div>
+    <p style="font-size:13px;color:#444;margin-bottom:12px;">Primero generá claves, después firmá un mensaje y verificá la firma. Después intentá cambiar el mensaje y volvé a verificar.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+      <button class="primary" onclick="sigGenerateKeys()">1. Generar claves</button>
+    </div>
+    <div class="field">
+      <label>Clave privada</label>
+      <div class="mono danger" id="sig-privkey">— generá claves primero —</div>
+    </div>
+    <div class="field">
+      <label>Clave pública</label>
+      <div class="mono" id="sig-pubkey">—</div>
+    </div>
+    <div class="field">
+      <label>Mensaje a firmar</label>
+      <input type="text" id="sig-message" value="Compra: 1000 tokens de Ladrillo · Inversor: Juan García · Monto: €1000">
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+      <button class="secondary" onclick="signMessage()" id="btn-sign" disabled>2. Firmar mensaje</button>
+    </div>
+    <div class="field">
+      <label>Firma digital (64 bytes)</label>
+      <div class="mono" id="sig-signature">—</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+      <button class="secondary" onclick="verifySignature()" id="btn-verify" disabled>3. Verificar firma</button>
+    </div>
+    <div class="field">
+      <label>Resultado de verificación</label>
+      <div class="mono" id="sig-result">—</div>
+    </div>
+    <div class="warn-box">
+      <strong>Probá esto después de verificar con éxito:</strong> cambiá una letra del mensaje (como si un atacante quisiera modificar el monto) y volvé a verificar. La firma va a ser inválida aunque cambies un solo carácter.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Lo que garantiza una firma digital</div>
+    <table>
+      <tr>
+        <th>Garantía</th>
+        <th>Qué significa</th>
+        <th>Cómo se logra</th>
+      </tr>
+      <tr>
+        <td><strong>Autenticidad</strong></td>
+        <td>La firmó quien dice haberla firmado</td>
+        <td>Solo la clave privada correcta produce una firma válida</td>
+      </tr>
+      <tr>
+        <td><strong>Integridad</strong></td>
+        <td>El mensaje no fue modificado</td>
+        <td>Cambiar 1 bit invalida la firma</td>
+      </tr>
+      <tr>
+        <td><strong>No repudio</strong></td>
+        <td>El firmante no puede negar haberlo firmado</td>
+        <td>La firma matemáticamente solo pudo venir de esa clave privada</td>
+      </tr>
+    </table>
+    <div class="info-box" style="margin-top:10px;">
+      <strong>Para tu proyecto:</strong> cuando un inversor compra tokens, su wallet firma la transacción. Eso garantiza que fue él quien autorizó la compra, el monto no fue modificado en tránsito, y no puede después decir "yo no autoricé esa compra". Las tres garantías juntas reemplazan la firma notarial en papel.
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== 5. WALLETS ===== -->
+<div id="wallets" class="section">
+  <h2>Wallets — qué son realmente</h2>
+  <p>El nombre "wallet" (billetera) es el más confuso del ecosistema blockchain porque <strong>una wallet no guarda tokens</strong>. Los tokens siempre están en la blockchain. La wallet guarda tu clave privada.</p>
+
+  <div class="card">
+    <div class="card-label">La analogía correcta</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
+      <div style="background:#fceaea;padding:12px;border-radius:8px;font-size:13px;">
+        <strong>Lo que pensás que es una wallet</strong><br><br>
+        Una caja fuerte donde guardás tus tokens.<br>
+        Si perdés la caja, perdés los tokens.
+      </div>
+      <div style="background:#eaf3de;padding:12px;border-radius:8px;font-size:13px;">
+        <strong>Lo que realmente es una wallet</strong><br><br>
+        Un llavero que guarda tu clave privada.<br>
+        Los tokens están en la blockchain.<br>
+        Si perdés el llavero, perdés el acceso, pero los tokens siguen en la blockchain para siempre (inaccesibles).
+      </div>
+    </div>
+    <div class="info-box">
+      <strong>Consecuencia práctica:</strong> si alguien "hackea tu wallet" no robó tokens de una caja. Robó tu clave privada, y con ella puede firmar transacciones como si fuera vos, transfiriendo tus tokens a su address. Los tokens se mueven en la blockchain, no "salen de la wallet".
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Tipos de wallet — cuál usás en tu proyecto</div>
+    <table>
+      <tr>
+        <th>Tipo</th>
+        <th>Quién guarda la clave privada</th>
+        <th>Ejemplo</th>
+        <th>Para tu proyecto</th>
+      </tr>
+      <tr>
+        <td><strong>EOA</strong><br><span style="font-size:11px;color:#888;">Externally Owned Account</span></td>
+        <td>El usuario (MetaMask, hardware wallet)</td>
+        <td>MetaMask</td>
+        <td style="color:#791f1f;">❌ Retail no lo usa</td>
+      </tr>
+      <tr>
+        <td><strong>Custodia</strong></td>
+        <td>Un tercero (Fireblocks, Magic)</td>
+        <td>Coinbase, Binance</td>
+        <td style="color:#27500a;">✓ Ideal para retail</td>
+      </tr>
+      <tr>
+        <td><strong>Smart Wallet</strong><br><span style="font-size:11px;color:#888;">ERC-4337</span></td>
+        <td>Un contrato inteligente</td>
+        <td>Safe, Argent</td>
+        <td style="color:#633806;">⚠ Futuro, complejo</td>
+      </tr>
+      <tr>
+        <td><strong>MPC Wallet</strong></td>
+        <td>Dividida entre varias partes</td>
+        <td>Fireblocks MPC</td>
+        <td style="color:#27500a;">✓ Institucional</td>
+      </tr>
+    </table>
+    <div class="warn-box" style="margin-top:10px;">
+      <strong>Por qué retail no usa EOA:</strong> pedirle a un inversor de 55 años que instale MetaMask, guarde una seed phrase de 12 palabras, y pague gas en ETH para comprar tokens inmobiliarios es perder el 90% del mercado. Necesitás custodia para que el usuario tenga una experiencia similar a un banco online.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Seed phrase — la clave maestra</div>
+    <p style="font-size:14px;color:#444;margin-bottom:8px;">Una wallet moderna no genera una sola clave privada, genera una <strong>seed phrase</strong>: 12 o 24 palabras en inglés que son la "semilla" de la que se derivan miles de claves privadas distintas.</p>
+    <div style="background:#1a1a1a;color:#fac775;font-family:monospace;font-size:13px;padding:14px;border-radius:8px;line-height:2;margin-bottom:10px;">
+      abandon · ability · able · about · above · absent<br>
+      absorb · abstract · absurd · abuse · access · accident
+    </div>
+    <p style="font-size:13px;color:#444;margin-bottom:8px;">De esas 12 palabras se deriva:</p>
+    <div style="font-size:13px;color:#444;line-height:2;">
+      → Clave privada wallet ETH<br>
+      → Clave privada wallet Bitcoin<br>
+      → Clave privada wallet Polygon<br>
+      → Miles de claves más (una por cada cuenta)<br>
+    </div>
+    <div class="danger-box" style="margin-top:10px;">
+      <strong>Quien tiene tu seed phrase tiene TODO.</strong> No es solo una contraseña, es la llave maestra de todas tus claves privadas en todas las redes. Si alguien la ve aunque sea en una foto, considerá que todos tus fondos están comprometidos.
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== 6. KYC Y CUSTODIA ===== -->
+<div id="kyc" class="section">
+  <h2>KYC, custodia y tu proyecto concreto</h2>
+  <p>Todo lo que vimos de criptografía lleva a una decisión arquitectónica fundamental para tu plataforma: ¿quién guarda las claves privadas de los inversores?</p>
+
+  <div class="card">
+    <div class="card-label">El problema de identidad en tu plataforma</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Blockchain garantiza que una tx fue firmada por la clave privada correcta. Pero <strong>no sabe si esa clave privada pertenece a una persona real, verificada, no sancionada</strong>. Eso lo tenés que resolver vos.</p>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="step-row" style="background:#f5f5f0;">
+        <div class="step-num">1</div>
+        <div style="font-size:13px;">
+          <strong>KYC (Know Your Customer)</strong><br>
+          Verificás que Juan García es quien dice ser: DNI, selfie, liveness check. Proveedor: Veriff, Onfido, Sumsub (~$2-5 por verificación).
+        </div>
+      </div>
+      <div class="step-row" style="background:#f5f5f0;">
+        <div class="step-num">2</div>
+        <div style="font-size:13px;">
+          <strong>AML (Anti Money Laundering)</strong><br>
+          Verificás que Juan no está en listas de sanciones (OFAC, EU sanctions). Monitoreo continuo de transacciones. Obligatorio por Ley 10/2010 en España.
+        </div>
+      </div>
+      <div class="step-row" style="background:#f5f5f0;">
+        <div class="step-num">3</div>
+        <div style="font-size:13px;">
+          <strong>Whitelist on-chain</strong><br>
+          Una vez aprobado el KYC, la wallet de Juan se agrega a una lista blanca en el smart contract. El contrato solo acepta transferencias de wallets whitelisted. Si Juan pierde el KYC (sanción, fraude), se le quita de la whitelist y sus tokens quedan congelados.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Custodia — solución para retail sin crypto experience</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">En vez de que cada inversor gestione su propia clave privada (imposible para retail), usás un proveedor de custodia que la gestiona por ellos.</p>
+    <table>
+      <tr>
+        <th>Proveedor</th>
+        <th>Tipo</th>
+        <th>Para qué</th>
+        <th>Costo aprox.</th>
+      </tr>
+      <tr>
+        <td><strong>Magic.link</strong></td>
+        <td>Custodia via email</td>
+        <td>Retail simple</td>
+        <td>~$0.05/tx</td>
+      </tr>
+      <tr>
+        <td><strong>Privy</strong></td>
+        <td>Custodia + social login</td>
+        <td>Retail moderno</td>
+        <td>~$0.02/tx</td>
+      </tr>
+      <tr>
+        <td><strong>Web3Auth</strong></td>
+        <td>MPC + social login</td>
+        <td>Retail avanzado</td>
+        <td>~$0.01/tx</td>
+      </tr>
+      <tr>
+        <td><strong>Fireblocks</strong></td>
+        <td>MPC institucional</td>
+        <td>Institucional / alto valor</td>
+        <td>$1000+/mes</td>
+      </tr>
+    </table>
+    <div class="info-box" style="margin-top:10px;">
+      <strong>La experiencia con custodia:</strong> el inversor se registra con email + contraseña como en cualquier banco online. El proveedor de custodia genera y guarda su clave privada de forma segura. Cuando el inversor compra tokens, la custodia firma la tx con su clave automáticamente. El inversor nunca ve ni toca su clave privada. Si pierde acceso, recupera por email como cualquier servicio web.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Arquitectura completa de identidad para tu proyecto</div>
+    <div style="background:#1a1a1a;color:#8ed888;font-family:monospace;font-size:12px;padding:16px;border-radius:8px;line-height:2;">
+      <span style="color:#6b9fd4;">// ONBOARDING del inversor</span><br>
+      1. Registro: email + contraseña<br>
+      2. KYC: Sumsub verifica DNI + selfie (~$3)<br>
+      3. Si aprobado → Privy genera wallet<br>
+      4. Tu backend agrega wallet a whitelist<br>
+         del smart contract<br>
+      5. Inversor puede operar<br><br>
+      <span style="color:#6b9fd4;">// COMPRA de tokens</span><br>
+      1. Inversor hace click en "Comprar"<br>
+      2. Tu backend crea la transacción<br>
+      3. Privy firma con la clave del inversor<br>
+      4. Tx va a la red (Polygon)<br>
+      5. 12 confirmaciones → acreditás tokens<br><br>
+      <span style="color:#6b9fd4;">// Si el regulador pide congelar a un inversor</span><br>
+      1. Llamás a freeze(wallet) en el contrato<br>
+      2. Sus tokens quedan bloqueados on-chain<br>
+      3. No puede transferirlos hasta que se<br>
+         resuelva la situación regulatoria
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Pregunta crítica: ¿la clave privada es on-chain?</div>
+    <div class="danger-box">
+      <strong>NUNCA. Jamás. Bajo ninguna circunstancia.</strong><br><br>
+      La clave privada NUNCA está en la blockchain. Solo están las claves públicas y las firmas. Si alguien te dice que "subió tu clave privada a un contrato", ese proyecto es una estafa o está roto.
+    </div>
+    <table style="margin-top:10px;">
+      <tr>
+        <th>Qué está on-chain</th>
+        <th>Qué NUNCA está on-chain</th>
+      </tr>
+      <tr>
+        <td>✓ Tu dirección (address)</td>
+        <td>✗ Tu clave privada</td>
+      </tr>
+      <tr>
+        <td>✓ Las firmas de tus transacciones</td>
+        <td>✗ Tu seed phrase</td>
+      </tr>
+      <tr>
+        <td>✓ Tu clave pública</td>
+        <td>✗ Tu contraseña</td>
+      </tr>
+      <tr>
+        <td>✓ El balance de tokens en tu address</td>
+        <td>✗ Ningún dato personal</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+<!-- ===== EJERCICIO ===== -->
+<div id="ejercicio" class="section">
+  <h2>Ejercicio de la Sección 3</h2>
+  <p>Cuatro preguntas para validar que integraste criptografía aplicada. Respondeme en el chat.</p>
+
+  <div class="exercise">
+    <div class="exercise-title">Pregunta 1 — Claves y analogía</div>
+    <ol>
+      <li>Andá al módulo "2 · Claves" y generá un par de claves. Fijate en los tres valores. ¿Podés derivar la clave privada a partir de la dirección? ¿Por qué sí o por qué no?</li>
+    </ol>
+  </div>
+
+  <div class="exercise" style="margin-top:12px;">
+    <div class="exercise-title">Pregunta 2 — Firmas</div>
+    <ol>
+      <li>Andá al módulo "4 · Firmas". Generá claves, firmá el mensaje predefinido, verificá la firma (debería ser válida). Ahora cambiá una sola letra del mensaje y volvé a verificar. ¿Qué pasa? ¿Qué te dice eso sobre la seguridad de las transacciones?</li>
+    </ol>
+  </div>
+
+  <div class="exercise" style="margin-top:12px;">
+    <div class="exercise-title">Pregunta 3 — Wallets y custodia</div>
+    <ol>
+      <li>Un inversor de 60 años quiere comprar €5000 de tokens en tu plataforma. Describe en tus palabras qué pasa con su clave privada desde que se registra hasta que tiene sus tokens. ¿Quién genera la clave? ¿Quién la guarda? ¿Quién firma la transacción? ¿Qué pasa si olvida su contraseña?</li>
+    </ol>
+  </div>
+
+  <div class="exercise" style="margin-top:12px;">
+    <div class="exercise-title">Pregunta 4 — Diseño de sistema (la más importante)</div>
+    <ol>
+      <li>Un inversor que pasó KYC hace 6 meses aparece en una lista de sanciones de la UE hoy. Tu plataforma tiene que reaccionar. Describí qué pasos técnicos tomás: ¿qué llamás en el smart contract? ¿qué actualizás en tu BD? ¿qué le mostrás al inversor? ¿qué pasa con sus tokens en la blockchain?</li>
+    </ol>
+  </div>
+
+  <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid #d3d1c7;font-size:13px;color:#666;">
+    Cuando respondas estas cuatro preguntas, pasamos a la Sección 4: Ethereum y Smart Contracts. Ahí vas a entender qué es la EVM, cómo funciona un contrato inteligente, y vas a leer tu primer código Solidity real.
+  </div>
+</div>
+
+
+<script>
+// ===== NAV =====
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = ['intro','keys','ecc','signatures','wallets','kyc','ejercicio'].indexOf(id);
+  document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+}
+
+// ===== SHA256 helper =====
+async function sha256hex(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ===== KEY GENERATION =====
+let currentKeyPair = null;
+
+async function generateKeys() {
+  const kp = await crypto.subtle.generateKey(
+    { name: 'ECDSA', namedCurve: 'P-256' },
+    true, ['sign', 'verify']
+  );
+  currentKeyPair = kp;
+
+  const privRaw = await crypto.subtle.exportKey('pkcs8', kp.privateKey);
+  const pubRaw  = await crypto.subtle.exportKey('spki',  kp.publicKey);
+
+  const privHex = Array.from(new Uint8Array(privRaw)).map(b => b.toString(16).padStart(2,'0')).join('');
+  const pubHex  = Array.from(new Uint8Array(pubRaw)).map(b => b.toString(16).padStart(2,'0')).join('');
+
+  const addrHash = await sha256hex(pubHex);
+  const addr = '0x' + addrHash.substring(0, 40);
+
+  document.getElementById('private-key').textContent = privHex.substring(0, 96) + '...';
+  document.getElementById('public-key').textContent  = pubHex.substring(0, 96) + '...';
+  document.getElementById('address').textContent     = addr;
+}
+
+// ===== SIGNATURE =====
+let sigKeyPair = null;
+
+async function sigGenerateKeys() {
+  sigKeyPair = await crypto.subtle.generateKey(
+    { name: 'ECDSA', namedCurve: 'P-256' },
+    true, ['sign', 'verify']
+  );
+  const pubRaw = await crypto.subtle.exportKey('spki', sigKeyPair.publicKey);
+  const privRaw = await crypto.subtle.exportKey('pkcs8', sigKeyPair.privateKey);
+  const pubHex  = Array.from(new Uint8Array(pubRaw)).map(b => b.toString(16).padStart(2,'0')).join('');
+  const privHex = Array.from(new Uint8Array(privRaw)).map(b => b.toString(16).padStart(2,'0')).join('');
+  document.getElementById('sig-privkey').textContent = privHex.substring(0,80) + '...';
+  document.getElementById('sig-pubkey').textContent  = pubHex.substring(0,80) + '...';
+  document.getElementById('btn-sign').disabled = false;
+  document.getElementById('sig-signature').textContent = '— claves generadas, ahora firmá el mensaje —';
+  document.getElementById('sig-result').textContent = '—';
+}
+
+let currentSig = null;
+let signedMessage = '';
+
+async function signMessage() {
+  if (!sigKeyPair) return;
+  const msg = document.getElementById('sig-message').value;
+  signedMessage = msg;
+  const encoded = new TextEncoder().encode(msg);
+  const sig = await crypto.subtle.sign(
+    { name: 'ECDSA', hash: 'SHA-256' },
+    sigKeyPair.privateKey, encoded
+  );
+  currentSig = sig;
+  const sigHex = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2,'0')).join('');
+  document.getElementById('sig-signature').textContent = sigHex;
+  document.getElementById('btn-verify').disabled = false;
+  document.getElementById('sig-result').textContent = '— ahora verificá la firma —';
+}
+
+async function verifySignature() {
+  if (!sigKeyPair || !currentSig) return;
+  const msg = document.getElementById('sig-message').value;
+  const encoded = new TextEncoder().encode(msg);
+  const valid = await crypto.subtle.verify(
+    { name: 'ECDSA', hash: 'SHA-256' },
+    sigKeyPair.publicKey, currentSig, encoded
+  );
+  const el = document.getElementById('sig-result');
+  if (valid) {
+    el.textContent = '✓ FIRMA VÁLIDA — el mensaje es auténtico y no fue modificado';
+    el.className = 'mono success';
+  } else {
+    el.textContent = '✗ FIRMA INVÁLIDA — el mensaje fue modificado o la clave no coincide';
+    el.className = 'mono danger';
+  }
+}
+
+// ===== ECC CANVAS =====
+const canvas = document.getElementById('ecc-canvas');
+const ctx = canvas ? canvas.getContext('2d') : null;
+let eccPoints = [];
+let eccStep_n = 0;
+
+// Simplified visual ECC on real curve y^2 = x^3 + 7 (mod p) — visual only
+function drawECC() {
+  if (!ctx) return;
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  ctx.strokeStyle = '#2a2a2a';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // Axes
+  ctx.strokeStyle = '#444';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, H/2); ctx.lineTo(W, H/2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H); ctx.stroke();
+
+  // Draw curve y^2 = x^3 + 7 (visual)
+  ctx.strokeStyle = '#378add';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  let first = true;
+  for (let px = 0; px < W; px++) {
+    const x = (px - W/2) / 50;
+    const y2 = x*x*x + 7;
+    if (y2 < 0) continue;
+    const y = Math.sqrt(y2);
+    const py_pos = H/2 - y * 50;
+    const py_neg = H/2 + y * 50;
+    if (py_pos >= 0 && py_pos <= H) {
+      if (first) { ctx.moveTo(px, py_pos); first = false; }
+      else ctx.lineTo(px, py_pos);
+    }
+  }
+  ctx.stroke();
+  ctx.beginPath();
+  first = true;
+  for (let px = 0; px < W; px++) {
+    const x = (px - W/2) / 50;
+    const y2 = x*x*x + 7;
+    if (y2 < 0) continue;
+    const y = Math.sqrt(y2);
+    const py_neg = H/2 + y * 50;
+    if (py_neg >= 0 && py_neg <= H) {
+      if (first) { ctx.moveTo(px, py_neg); first = false; }
+      else ctx.lineTo(px, py_neg);
+    }
+  }
+  ctx.stroke();
+
+  // Draw points
+  eccPoints.forEach((pt, i) => {
+    const px = W/2 + pt.x * 50;
+    const py = H/2 - pt.y * 50;
+    ctx.beginPath();
+    ctx.arc(px, py, i === 0 ? 8 : 6, 0, Math.PI*2);
+    ctx.fillStyle = i === 0 ? '#fac775' : (i === eccPoints.length-1 ? '#e24b4a' : '#97c459');
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = '11px monospace';
+    ctx.fillText(i === 0 ? 'G' : (i+1)+'G', px+8, py-4);
+
+    if (i > 0) {
+      const prev = eccPoints[i-1];
+      const ppx = W/2 + prev.x * 50;
+      const ppy = H/2 - prev.y * 50;
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(151,196,89,0.4)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4,4]);
+      ctx.moveTo(ppx, ppy);
+      ctx.lineTo(px, py);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  });
+}
+
+// Simplified "jumps" on the curve for visualization
+const eccJumpPoints = [
+  {x: -1.2, y: 1.3},
+  {x: 1.8,  y: 2.6},
+  {x: -0.8, y: 1.9},
+  {x: 2.1,  y: 3.2},
+  {x: -1.5, y: 0.8},
+  {x: 0.5,  y: 2.8},
+  {x: 3.0,  y: 5.3},
+  {x: -2.0, y: 0.3},
+];
+
+function eccStep() {
+  if (eccStep_n >= eccJumpPoints.length) {
+    document.getElementById('ecc-info').textContent =
+      'Llegaste al punto ' + (eccStep_n+1) + 'G — esta es tu "clave pública". Para saber cuántos saltos diste (clave privada), alguien tendría que probar 1, 2, 3... hasta encontrarlo.';
+    return;
+  }
+  eccPoints.push(eccJumpPoints[eccStep_n]);
+  eccStep_n++;
+  drawECC();
+  document.getElementById('ecc-info').textContent =
+    'Salto ' + eccStep_n + ': ahora estás en el punto ' + eccStep_n + 'G. ' +
+    (eccStep_n < eccJumpPoints.length
+      ? 'Seguí saltando para acumular más "clave privada".'
+      : 'Este punto final es tu clave pública.');
+}
+
+function eccReset() {
+  eccPoints = [];
+  eccStep_n = 0;
+  drawECC();
+  document.getElementById('ecc-info').textContent = 'Punto G (generador): listo para empezar';
+}
+
+// Init
+drawECC();
+</script>
+</body>
+</html>
