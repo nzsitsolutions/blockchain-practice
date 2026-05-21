@@ -223,7 +223,8 @@ tr:nth-child(even) td { background: #f8f8f4; }
   <button class="nav-btn" onclick="show('ecc')">3 · ECC</button>
   <button class="nav-btn" onclick="show('signatures')">4 · Firmas</button>
   <button class="nav-btn" onclick="show('wallets')">5 · Wallets</button>
-  <button class="nav-btn" onclick="show('kyc')">6 · KYC y custodia</button>
+  <button class="nav-btn" onclick="show('hdwallets')">6 · Seed & HD</button>
+  <button class="nav-btn" onclick="show('kyc')">7 · KYC y custodia</button>
   <button class="nav-btn" onclick="show('ejercicio')">Ejercicio</button>
 </nav>
 
@@ -664,6 +665,284 @@ tr:nth-child(even) td { background: #f8f8f4; }
 </div>
 
 
+  </div>
+</div>
+
+
+<!-- ===== 5.5 HD WALLETS Y WALLETS DEL PROYECTO ===== -->
+<div id="hdwallets" class="section">
+  <h2>Seed phrase, HD Wallets y las wallets de tu proyecto</h2>
+  <p>Esta sección responde dos preguntas concretas: ¿qué es exactamente una seed phrase y cómo genera claves? ¿Y por qué tu plataforma Ladrillo necesita varias wallets propias además de las de los inversores?</p>
+
+  <div class="card">
+    <div class="card-label">El problema que resuelve la seed phrase</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Sin seed phrase, cada wallet genera una sola clave privada. Si tenés ETH, Bitcoin y Polygon, necesitás <strong>tres claves privadas distintas</strong> guardadas en tres lugares distintos. Un desastre de gestión.</p>
+    <p style="font-size:14px;color:#444;margin-bottom:0;">La seed phrase resuelve esto: <strong>una sola semilla genera un árbol entero de claves</strong>, una por cada red, una por cada cuenta. Respaldás una sola cosa y tenés acceso a todo.</p>
+    <div class="info-box" style="margin-top:10px;">
+      <strong>La analogía:</strong> la seed phrase es como el código maestro de una caja fuerte modular. Con ese código podés abrir cualquier cajón del módulo (ETH, Bitcoin, Polygon). Sin el código, cada cajón necesitaría su propia llave guardada por separado.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿Qué es una seed phrase exactamente?</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Es un número aleatorio de 256 bits representado como 12 o 24 palabras del diccionario BIP-39 (2048 palabras en inglés). Las palabras son solo una forma legible de ese número, nada más.</p>
+    <div style="background:#1a1a1a;color:#fac775;font-family:monospace;font-size:13px;padding:14px;border-radius:8px;line-height:2;margin-bottom:12px;">
+      abandon · ability · able · about · above · absent<br>
+      absorb · abstract · absurd · abuse · access · accident
+    </div>
+    <div style="font-size:13px;color:#444;line-height:1.8;">
+      Esas 12 palabras representan este número:<br>
+      <span style="font-family:monospace;font-size:11px;color:#666;">
+        00000000 00000001 00000010 00000011 00000100 00000101...<br>
+        (256 bits de entropía pura)
+      </span>
+    </div>
+    <div class="warn-box" style="margin-top:10px;">
+      <strong>Si alguien ve tu seed phrase aunque sea en una foto:</strong> puede regenerar todas tus claves privadas en cualquier wallet del mundo en segundos. No hay recuperación posible. Considerá todos tus fondos comprometidos.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">De seed phrase a claves — el árbol HD (BIP-32 + BIP-44)</div>
+    <p style="font-size:14px;color:#444;margin-bottom:12px;">HD significa <strong>Hierarchical Deterministic</strong>. Deterministic = misma semilla → siempre las mismas claves. Hierarchical = organizadas en un árbol con rutas estándar.</p>
+    <div style="background:#1a1a1a;color:#8ed888;font-family:monospace;font-size:12px;padding:16px;border-radius:8px;line-height:2.2;">
+      <span style="color:#fac775;">Seed phrase (12 palabras)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;↓ SHA-512 (PBKDF2)<br>
+      <span style="color:#fac775;">Master Key (512 bits)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;↓ BIP-32 derivation<br>
+      <span style="color:#6b9fd4;">m/44'/60'/0'/0/0</span>&nbsp;&nbsp;→ <span style="color:#97c459;">Wallet ETH cuenta 1&nbsp;&nbsp;→ 0xABC...</span><br>
+      <span style="color:#6b9fd4;">m/44'/60'/0'/0/1</span>&nbsp;&nbsp;→ <span style="color:#97c459;">Wallet ETH cuenta 2&nbsp;&nbsp;→ 0xDEF...</span><br>
+      <span style="color:#6b9fd4;">m/44'/60'/0'/0/2</span>&nbsp;&nbsp;→ <span style="color:#97c459;">Wallet ETH cuenta 3&nbsp;&nbsp;→ 0x123...</span><br>
+      <span style="color:#6b9fd4;">m/44'/0'/0'/0/0</span>&nbsp;&nbsp;&nbsp;→ <span style="color:#97c459;">Wallet Bitcoin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ 1BvB...</span><br>
+      <span style="color:#6b9fd4;">m/44'/137'/0'/0/0</span>&nbsp;→ <span style="color:#97c459;">Wallet Polygon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ 0x456...</span><br>
+    </div>
+    <p style="font-size:13px;color:#444;margin-top:12px;">Cada línea del árbol se llama <strong>path de derivación</strong>. Es la "dirección" dentro del árbol para llegar a una clave específica.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿Qué significa cada parte del path? — BIP-44</div>
+    <p style="font-size:14px;color:#444;margin-bottom:12px;">BIP-44 es el estándar que define cómo estructurar ese árbol para que cualquier wallet del mundo genere las mismas claves desde la misma seed phrase.</p>
+    <div style="background:#f5f5f0;border-radius:8px;padding:14px;font-family:monospace;font-size:13px;margin-bottom:12px;">
+      <span style="color:#888;">formato:</span> &nbsp;m &nbsp;/ &nbsp;purpose' &nbsp;/ &nbsp;coin_type' &nbsp;/ &nbsp;account' &nbsp;/ &nbsp;change &nbsp;/ &nbsp;index<br>
+      <span style="color:#888;">ejemplo:</span> &nbsp;m &nbsp;/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;44' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;60' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &nbsp;&nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;&nbsp;0
+    </div>
+    <table>
+      <tr>
+        <th>Parte</th>
+        <th>Qué significa</th>
+        <th>Valores comunes</th>
+      </tr>
+      <tr>
+        <td><strong>m</strong></td>
+        <td>Master key (la raíz del árbol)</td>
+        <td>Siempre m</td>
+      </tr>
+      <tr>
+        <td><strong>purpose (44')</strong></td>
+        <td>Qué estándar usás</td>
+        <td>44 = BIP-44, siempre</td>
+      </tr>
+      <tr>
+        <td><strong>coin_type</strong></td>
+        <td>Qué red/moneda</td>
+        <td>60=ETH, 0=Bitcoin, 137=Polygon</td>
+      </tr>
+      <tr>
+        <td><strong>account</strong></td>
+        <td>Cuenta dentro de esa red</td>
+        <td>0 = primera cuenta</td>
+      </tr>
+      <tr>
+        <td><strong>change</strong></td>
+        <td>Uso interno o externo</td>
+        <td>0 = externa (recibir fondos)</td>
+      </tr>
+      <tr>
+        <td><strong>index</strong></td>
+        <td>Número de dirección</td>
+        <td>0, 1, 2... infinitas</td>
+      </tr>
+    </table>
+    <div class="info-box" style="margin-top:10px;">
+      <strong>Para qué lo necesitás saber:</strong> cuando el especialista te diga "la wallet del admin está en m/44'/60'/0'/0/0 del hardware wallet", sabés exactamente qué es. Si él se va del proyecto, podés recuperar esa wallet con la seed phrase + ese path.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Simulador de derivación — la misma seed, distintas wallets</div>
+    <p style="font-size:13px;color:#444;margin-bottom:12px;">Tocá cada red para ver cómo la misma seed phrase genera una dirección diferente para cada una.</p>
+    <div style="background:#1a1a1a;color:#fac775;font-family:monospace;font-size:12px;padding:12px;border-radius:8px;margin-bottom:14px;line-height:1.8;">
+      Seed phrase: "abandon ability able about above absent absorb abstract absurd abuse access accident"
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;" id="net-btns">
+      <button class="secondary" onclick="showDerivation('eth')">ETH / Polygon</button>
+      <button class="secondary" onclick="showDerivation('btc')">Bitcoin</button>
+      <button class="secondary" onclick="showDerivation('pol')">Polygon (custom)</button>
+      <button class="secondary" onclick="showDerivation('multi')">Multi-cuenta ETH</button>
+    </div>
+    <div id="derivation-result" style="display:none;">
+      <div class="field">
+        <label id="deriv-label">Path</label>
+        <div class="mono" id="deriv-path"></div>
+      </div>
+      <div id="deriv-accounts"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Las wallets de TU proyecto Ladrillo — por qué necesitás varias</div>
+    <p style="font-size:14px;color:#444;margin-bottom:12px;">Al igual que una empresa no usa la misma cuenta bancaria para todo, tu plataforma necesita wallets separadas por función. Cada una tiene un propósito específico y un nivel de riesgo distinto.</p>
+
+    <div style="display:flex;flex-direction:column;gap:10px;">
+
+      <div style="border:1px solid #e24b4a;border-radius:10px;padding:14px;background:#fff;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:500;font-size:14px;">🔑 Wallet Deployer</span>
+          <span style="font-size:11px;background:#fceaea;color:#791f1f;padding:2px 8px;border-radius:8px;">Riesgo: alto pre-deploy</span>
+        </div>
+        <div style="font-size:13px;color:#444;line-height:1.8;">
+          <strong>¿Qué hace?</strong> Publica (deploya) los smart contracts en la blockchain. Se usa <em>una sola vez</em> al lanzar el proyecto.<br>
+          <strong>¿Quién la tiene?</strong> El tech lead (vos) o el especialista blockchain.<br>
+          <strong>¿Qué pasa si la roban?</strong> Antes del deploy: pueden publicar contratos fraudulentos. Después del deploy: sin impacto.<br>
+          <strong>Path típico:</strong> <span style="font-family:monospace;font-size:11px;">m/44'/60'/0'/0/0</span> en hardware wallet
+        </div>
+      </div>
+
+      <div style="border:1px solid #ba7517;border-radius:10px;padding:14px;background:#fff;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:500;font-size:14px;">⚙️ Wallet Admin / Owner</span>
+          <span style="font-size:11px;background:#faeeda;color:#633806;padding:2px 8px;border-radius:8px;">Riesgo: crítico siempre</span>
+        </div>
+        <div style="font-size:13px;color:#444;line-height:1.8;">
+          <strong>¿Qué hace?</strong> Llama a las funciones administrativas del contrato día a día:<br>
+          → <span style="font-family:monospace;font-size:11px;">whitelist(wallet)</span> cuando aprobás KYC de un inversor<br>
+          → <span style="font-family:monospace;font-size:11px;">freeze(wallet)</span> cuando un inversor aparece sancionado<br>
+          → <span style="font-family:monospace;font-size:11px;">pause()</span> en caso de emergencia<br>
+          → <span style="font-family:monospace;font-size:11px;">updateFee()</span> si cambiás comisiones<br>
+          <strong>¿Quién la tiene?</strong> Tu backend la usa automáticamente (firmando txs internas).<br>
+          <strong>¿Qué pasa si la roban?</strong> El atacante puede congelar wallets de inversores o manipular el contrato. <strong>La más crítica.</strong><br>
+          <strong>Path típico:</strong> <span style="font-family:monospace;font-size:11px;">m/44'/60'/0'/0/1</span> en Fireblocks/HSM
+        </div>
+      </div>
+
+      <div style="border:1px solid #97c459;border-radius:10px;padding:14px;background:#fff;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:500;font-size:14px;">🏦 Wallet Tesorería</span>
+          <span style="font-size:11px;background:#eaf3de;color:#27500a;padding:2px 8px;border-radius:8px;">Riesgo: financiero</span>
+        </div>
+        <div style="font-size:13px;color:#444;line-height:1.8;">
+          <strong>¿Qué hace?</strong> Recibe los fees/comisiones que cobra la plataforma por cada operación. Separada del admin para que el dinero de la empresa no esté en la misma wallet con poderes de admin.<br>
+          <strong>¿Quién la tiene?</strong> La empresa (founders/CFO).<br>
+          <strong>¿Qué pasa si la roban?</strong> Pierden los fondos acumulados pero no pueden manipular los contratos.<br>
+          <strong>Path típico:</strong> <span style="font-family:monospace;font-size:11px;">m/44'/60'/0'/0/2</span> en multisig (Safe)
+        </div>
+      </div>
+
+      <div style="border:1px solid #378add;border-radius:10px;padding:14px;background:#fff;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:500;font-size:14px;">👤 Wallets de Inversores (×N)</span>
+          <span style="font-size:11px;background:#e6f1fb;color:#0c447c;padding:2px 8px;border-radius:8px;">Gestionadas por Privy</span>
+        </div>
+        <div style="font-size:13px;color:#444;line-height:1.8;">
+          <strong>¿Qué hacen?</strong> Cada inversor tiene una wallet propia. Firman las transacciones de compra, transferencia y cobro de rentas.<br>
+          <strong>¿Quién las gestiona?</strong> Privy (custodia). El inversor solo ve email + contraseña.<br>
+          <strong>¿El inversor ve la seed phrase?</strong> No. Privy gestiona las claves internamente.<br>
+          <strong>¿Qué pasa si el inversor pierde contraseña?</strong> Recupera por email, igual que cualquier app.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">⚠️ Aclaración importante — wallet vs smart contract</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Cuando decimos "la wallet admin llama a freeze()" puede sonar como si la wallet tuviera comportamiento. <strong>No es así.</strong> Una wallet es pasiva. Siempre.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div style="background:#fceaea;padding:12px;border-radius:8px;font-size:13px;line-height:1.8;">
+        <strong>WALLET — solo firma</strong><br>
+        → Guarda la clave privada<br>
+        → Firma transacciones<br>
+        → Tiene una dirección<br>
+        → No tiene código<br>
+        → No tiene lógica<br>
+        → Es <strong>pasiva</strong>
+      </div>
+      <div style="background:#eaf3de;padding:12px;border-radius:8px;font-size:13px;line-height:1.8;">
+        <strong>SMART CONTRACT — ejecuta</strong><br>
+        → Vive en la blockchain<br>
+        → Tiene código y lógica<br>
+        → Tiene funciones ejecutables<br>
+        → whitelist(), freeze(), pause()<br>
+        → Reacciona a transacciones<br>
+        → Es <strong>activo</strong>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#444;margin-bottom:10px;">El flujo real cuando "la wallet admin congela a un inversor":</p>
+    <div style="background:#1a1a1a;color:#8ed888;font-family:monospace;font-size:12px;padding:14px;border-radius:8px;line-height:2;">
+      1. Tu backend crea una tx:<br>
+      &nbsp;&nbsp;&nbsp;"llamar freeze(0xDEF) del contrato 0x789"<br>
+      2. <span style="color:#fac775;">Wallet admin FIRMA</span> esa tx con su clave privada<br>
+      3. La tx firmada va a la blockchain<br>
+      4. La blockchain verifica la firma ✓<br>
+      5. <span style="color:#97c459;">El contrato ejecuta freeze()</span> → inversor congelado
+    </div>
+    <div class="info-box" style="margin-top:10px;">
+      <strong>La analogía:</strong> la wallet es tu firma manuscrita. El contrato es el documento legal que dice qué efecto tiene tu firma. Tu firma sola no hace nada. El documento + tu firma = acción legal. El comportamiento siempre vive en el contrato. La wallet solo prueba quién está autorizado a dispararlo.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Resumen visual — todas las wallets de Ladrillo</div>
+    <div style="background:#1a1a1a;color:#8ed888;font-family:monospace;font-size:12px;padding:16px;border-radius:8px;line-height:2.2;">
+      <span style="color:#6b9fd4;">LADRILLO PLATFORM</span><br>
+      ├── <span style="color:#e24b4a;">Wallet Deployer</span> &nbsp;&nbsp;→ deploya contratos (1 sola vez)<br>
+      ├── <span style="color:#fac775;">Wallet Admin</span> &nbsp;&nbsp;&nbsp;&nbsp;→ whitelist, freeze, pause (diario)<br>
+      ├── <span style="color:#97c459;">Wallet Tesorería</span> &nbsp;→ recibe fees de la plataforma<br>
+      └── <span style="color:#6b9fd4;">Wallets Inversores</span> (gestionadas por Privy)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── Inversor Juan &nbsp;&nbsp;→ 0xABC... (1.000 tokens)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── Inversor María &nbsp;→ 0xDEF... (500 tokens)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;└── Inversor Carlos →  0x123... (2.000 tokens)
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿La seed phrase de las wallets del proyecto la ven los inversores?</div>
+    <table>
+      <tr>
+        <th>Wallet</th>
+        <th>¿Tiene seed phrase?</th>
+        <th>¿Quién la tiene?</th>
+        <th>¿Inversor la ve?</th>
+      </tr>
+      <tr>
+        <td>Deployer</td>
+        <td>Sí</td>
+        <td>Tech lead / founder</td>
+        <td style="color:#791f1f;">No</td>
+      </tr>
+      <tr>
+        <td>Admin</td>
+        <td>Sí (o Fireblocks MPC)</td>
+        <td>Backend / ops team</td>
+        <td style="color:#791f1f;">No</td>
+      </tr>
+      <tr>
+        <td>Tesorería</td>
+        <td>Sí (multisig)</td>
+        <td>Founders / CFO</td>
+        <td style="color:#791f1f;">No</td>
+      </tr>
+      <tr>
+        <td>Inversor</td>
+        <td>Privy lo gestiona</td>
+        <td>Privy internamente</td>
+        <td style="color:#791f1f;">Nunca</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
 <!-- ===== 6. KYC Y CUSTODIA ===== -->
 <div id="kyc" class="section">
   <h2>KYC, custodia y tu proyecto concreto</h2>
@@ -838,8 +1117,58 @@ function show(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  const idx = ['intro','keys','ecc','signatures','wallets','kyc','ejercicio'].indexOf(id);
+  const idx = ['intro','keys','ecc','signatures','wallets','hdwallets','kyc','ejercicio'].indexOf(id);
   document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+}
+
+// ===== DERIVATION SIMULATOR =====
+const derivations = {
+  eth: {
+    label: 'Ethereum — mismo path que Polygon por defecto',
+    paths: [
+      { path: "m/44'/60'/0'/0/0", net: 'ETH', addr: '0xa1B2c3D4e5F6a7B8c9D0e1F2a3B4c5D6e7F8a9B0' },
+      { path: "m/44'/60'/0'/0/1", net: 'ETH', addr: '0xF1e2D3c4B5a6F7e8D9c0B1a2F3e4D5c6B7a8F9e0' },
+    ]
+  },
+  btc: {
+    label: 'Bitcoin — coin_type 0, formato de address distinto',
+    paths: [
+      { path: "m/44'/0'/0'/0/0", net: 'BTC', addr: '1A1zP1eP5QGefi2DMPTfTL5SLmv7Divf Na' },
+      { path: "m/44'/0'/0'/0/1", net: 'BTC', addr: '12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzY6Y' },
+    ]
+  },
+  pol: {
+    label: 'Polygon — coin_type 137, pero muchas wallets usan 60 (mismo que ETH)',
+    paths: [
+      { path: "m/44'/137'/0'/0/0", net: 'MATIC', addr: '0xB2c3D4e5F6a7B8c9D0e1F2a3B4c5D6e7F8a9B0a1' },
+      { path: "m/44'/60'/0'/0/0",  net: 'MATIC', addr: '0xa1B2c3D4e5F6a7B8c9D0e1F2a3B4c5D6e7F8a9B0' },
+    ]
+  },
+  multi: {
+    label: 'Multi-cuenta ETH — mismo coin_type, distinto account o index',
+    paths: [
+      { path: "m/44'/60'/0'/0/0", net: 'ETH cuenta 1',  addr: '0xa1B2c3D4e5F6a7B8c9D0e1F2a3B4c5D6e7F8a9B0' },
+      { path: "m/44'/60'/1'/0/0", net: 'ETH cuenta 2',  addr: '0xC3d4E5f6A7b8C9d0E1f2A3b4C5d6E7f8A9b0C1d2' },
+      { path: "m/44'/60'/2'/0/0", net: 'ETH cuenta 3',  addr: '0xD4e5F6a7B8c9D0e1F2a3B4c5D6e7F8a9B0c1D2e3' },
+    ]
+  }
+};
+
+function showDerivation(key) {
+  const d = derivations[key];
+  document.getElementById('derivation-result').style.display = 'block';
+  document.getElementById('deriv-label').textContent = d.label;
+  document.getElementById('deriv-path').textContent = d.paths.map(p => p.path).join('\n');
+  const acc = document.getElementById('deriv-accounts');
+  acc.innerHTML = '';
+  d.paths.forEach(p => {
+    const div = document.createElement('div');
+    div.style.cssText = 'margin-bottom:10px;';
+    div.innerHTML =
+      '<div style="font-size:11px;color:#888;margin-bottom:3px;">' + p.path + ' → ' + p.net + '</div>' +
+      '<div class="mono success" style="font-size:11px;">' + p.addr + '</div>';
+    acc.appendChild(div);
+  });
 }
 
 // ===== SHA256 helper =====
