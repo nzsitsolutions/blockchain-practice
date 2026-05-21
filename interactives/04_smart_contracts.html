@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sección 4 — Smart Contracts</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f5f5f0;
+  color: #1a1a1a;
+  padding: 1.5rem 1rem 3rem;
+  max-width: 740px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+.nav {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.nav-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  background: #fff;
+  border: 1px solid #d3d1c7;
+  border-radius: 20px;
+  cursor: pointer;
+  color: #444;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.nav-btn:hover { background: #eee; }
+.nav-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.section { display: none; }
+.section.active { display: block; }
+h1 { font-size: 20px; font-weight: 500; margin-bottom: 0.4rem; }
+h2 { font-size: 17px; font-weight: 500; margin: 1.5rem 0 0.5rem; }
+.subtitle { font-size: 13px; color: #666; margin-bottom: 1.5rem; }
+p { font-size: 14px; color: #444; margin-bottom: 0.75rem; line-height: 1.65; }
+strong { font-weight: 500; color: #1a1a1a; }
+.card {
+  background: #fff;
+  border: 1px solid #d3d1c7;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.card-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #888;
+  margin-bottom: 10px;
+}
+.info-box {
+  background: #e6f1fb;
+  color: #0c447c;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 12px 0;
+  border-left: 3px solid #378add;
+  line-height: 1.6;
+}
+.warn-box {
+  background: #faeeda;
+  color: #633806;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 12px 0;
+  border-left: 3px solid #ba7517;
+  line-height: 1.6;
+}
+.danger-box {
+  background: #fceaea;
+  color: #791f1f;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 12px 0;
+  border-left: 3px solid #e24b4a;
+  line-height: 1.6;
+}
+.success-box {
+  background: #eaf3de;
+  color: #27500a;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 12px 0;
+  border-left: 3px solid #97c459;
+  line-height: 1.6;
+}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { padding: 8px; text-align: left; font-weight: 500; color: #555; background: #f5f5f0; }
+td { padding: 8px; border-top: 1px solid #eee; color: #444; }
+tr:nth-child(even) td { background: #f8f8f4; }
+.code {
+  background: #1a1a1a;
+  color: #8ed888;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  padding: 16px;
+  border-radius: 8px;
+  line-height: 1.9;
+  margin: 10px 0;
+  overflow-x: auto;
+}
+.code .c  { color: #6b9fd4; }
+.code .k  { color: #fac775; }
+.code .s  { color: #f8a97a; }
+.code .t  { color: #c792ea; }
+.code .n  { color: #8ed888; }
+.code .v  { color: #97c459; }
+.code .e  { color: #e24b4a; }
+.code .w  { color: #fff; }
+button.primary {
+  padding: 9px 18px;
+  font-size: 14px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+  margin-bottom: 8px;
+}
+button.primary:hover { opacity: 0.85; }
+button.secondary {
+  padding: 8px 14px;
+  font-size: 13px;
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #d3d1c7;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  margin: 4px;
+}
+button.secondary:hover { background: #f5f5f0; }
+button.secondary.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.step-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.step-num {
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.exercise {
+  background: #fff;
+  border: 2px solid #1a1a1a;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 16px;
+}
+.exercise-title { font-size: 14px; font-weight: 500; margin-bottom: 10px; }
+.exercise ol { padding-left: 18px; }
+.exercise li { font-size: 13px; color: #444; margin-bottom: 8px; line-height: 1.6; }
+.sim-output {
+  background: #f5f5f0;
+  border: 1px solid #d3d1c7;
+  border-radius: 8px;
+  padding: 12px;
+  font-family: monospace;
+  font-size: 13px;
+  min-height: 60px;
+  color: #444;
+  margin-top: 10px;
+  line-height: 1.8;
+}
+.sim-output.ok  { background: #eaf3de; color: #27500a; border-color: #97c459; }
+.sim-output.err { background: #fceaea; color: #791f1f; border-color: #e24b4a; }
+input[type=text], input[type=number] {
+  font-family: inherit;
+  font-size: 14px;
+  padding: 8px 12px;
+  border: 1px solid #d3d1c7;
+  border-radius: 8px;
+  background: #fff;
+  color: #1a1a1a;
+  width: 100%;
+  margin-bottom: 8px;
+}
+.field label { font-size: 13px; color: #555; font-weight: 500; display: block; margin-bottom: 4px; }
+.field { margin-bottom: 12px; }
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: 500;
+  margin-left: 6px;
+}
+.tag.view     { background: #e6f1fb; color: #0c447c; }
+.tag.write    { background: #faeeda; color: #633806; }
+.tag.event    { background: #f0e6fb; color: #4a0c7c; }
+.tag.modifier { background: #eaf3de; color: #27500a; }
+</style>
+</head>
+<body>
+
+<h1>Sección 4 — Smart Contracts</h1>
+<p class="subtitle">Qué son · EVM · Solidity para leer · Funciones · Eventos · ERC-20/1400/3643 · Integración .NET</p>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="show('que')">1 · Qué son</button>
+  <button class="nav-btn" onclick="show('evm')">2 · EVM</button>
+  <button class="nav-btn" onclick="show('solidity')">3 · Solidity</button>
+  <button class="nav-btn" onclick="show('funciones')">4 · Funciones</button>
+  <button class="nav-btn" onclick="show('erc')">5 · Estándares ERC</button>
+  <button class="nav-btn" onclick="show('backend')">6 · Backend .NET</button>
+  <button class="nav-btn" onclick="show('ejercicio')">Ejercicio</button>
+</nav>
+
+
+<!-- ===== 1. QUÉ SON ===== -->
+<div id="que" class="section active">
+  <h2>¿Qué es un smart contract?</h2>
+  <p>Un smart contract es <strong>código que vive en la blockchain</strong>. Una vez deployado, se ejecuta automáticamente cuando alguien lo llama, sin intermediarios, sin posibilidad de que nadie lo detenga o modifique (a menos que el propio código lo permita).</p>
+
+  <div class="card">
+    <div class="card-label">La analogía de la máquina expendedora</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Un smart contract es exactamente como una máquina expendedora:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div style="background:#f5f5f0;padding:12px;border-radius:8px;font-size:13px;line-height:1.8;">
+        <strong>Máquina expendedora</strong><br>
+        Metés $1.50<br>
+        Elegís producto B3<br>
+        La máquina ejecuta la lógica<br>
+        Te da el producto<br>
+        Sin empleado, sin negociación<br>
+        Si no tenés $1.50, no sale nada
+      </div>
+      <div style="background:#e6f1fb;padding:12px;border-radius:8px;font-size:13px;line-height:1.8;">
+        <strong>Smart contract</strong><br>
+        Mandás €1000 + firma<br>
+        Llamás a buyTokens()<br>
+        El contrato ejecuta la lógica<br>
+        Te da 1000 tokens<br>
+        Sin intermediario, sin negociación<br>
+        Si no tenés el balance, revierte
+      </div>
+    </div>
+    <div class="info-box">
+      <strong>La diferencia clave con una API:</strong> tu API de .NET la podés apagar, modificar, hackear o engañar. Un smart contract deployado en Ethereum no lo puede apagar nadie. Ni vos. Ejecuta exactamente lo que dice el código, siempre, para siempre. Por eso el código tiene que estar perfecto antes del deploy.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Comparativa: tu API .NET vs un smart contract</div>
+    <table>
+      <tr>
+        <th></th>
+        <th>API .NET</th>
+        <th>Smart Contract</th>
+      </tr>
+      <tr>
+        <td>¿Dónde vive?</td>
+        <td>Tu servidor / AWS</td>
+        <td>En miles de nodos de la blockchain</td>
+      </tr>
+      <tr>
+        <td>¿Quién lo ejecuta?</td>
+        <td>Tu servidor</td>
+        <td>Todos los nodos simultáneamente</td>
+      </tr>
+      <tr>
+        <td>¿Se puede modificar?</td>
+        <td>Sí, deployás nueva versión</td>
+        <td>No (salvo patrón upgradeable)</td>
+      </tr>
+      <tr>
+        <td>¿Se puede apagar?</td>
+        <td>Sí</td>
+        <td>No (salvo función pause())</td>
+      </tr>
+      <tr>
+        <td>¿Quién paga la ejecución?</td>
+        <td>Vos (AWS bill)</td>
+        <td>El que llama la función (gas)</td>
+      </tr>
+      <tr>
+        <td>¿Es auditable?</td>
+        <td>Solo si vos lo permitís</td>
+        <td>Sí, cualquiera ve el código</td>
+      </tr>
+      <tr>
+        <td>¿Qué pasa si hay un bug?</td>
+        <td>Deployás hotfix</td>
+        <td>El bug vive para siempre (o pausás)</td>
+      </tr>
+    </table>
+    <div class="danger-box" style="margin-top:10px;">
+      <strong>El bug más caro de la historia:</strong> en 2016, un bug en el smart contract "The DAO" permitió a un atacante drenar $60 millones en ETH. El contrato ejecutó exactamente lo que decía el código — el problema era que el código tenía un error. No había hotfix posible. Esto llevó al hard fork de Ethereum y la creación de Ethereum Classic.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿Qué puede hacer un smart contract?</div>
+    <table>
+      <tr>
+        <th>Puede</th>
+        <th>No puede</th>
+      </tr>
+      <tr>
+        <td>✓ Guardar y transferir tokens</td>
+        <td>✗ Acceder a internet por sí solo</td>
+      </tr>
+      <tr>
+        <td>✓ Ejecutar lógica condicional</td>
+        <td>✗ Leer datos externos (necesita oráculo)</td>
+      </tr>
+      <tr>
+        <td>✓ Emitir eventos (logs)</td>
+        <td>✗ Generar aleatoriedad real</td>
+      </tr>
+      <tr>
+        <td>✓ Llamar a otros contratos</td>
+        <td>✗ Ejecutarse solo (necesita trigger)</td>
+      </tr>
+      <tr>
+        <td>✓ Guardar estado permanente</td>
+        <td>✗ Modificar txs pasadas</td>
+      </tr>
+      <tr>
+        <td>✓ Rechazar operaciones inválidas</td>
+        <td>✗ Devolver dinero si nadie lo programó</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Simulador — la máquina expendedora</div>
+    <p style="font-size:13px;color:#444;margin-bottom:12px;">Interactuá con este contrato simulado de compra de tokens. Refleja exactamente la lógica que tendría el contrato real de Ladrillo.</p>
+
+    <div class="field">
+      <label>Tu balance disponible (€)</label>
+      <input type="number" id="sim-balance" value="500">
+    </div>
+    <div class="field">
+      <label>¿Estás en la whitelist? (KYC aprobado)</label>
+      <div style="display:flex;gap:8px;">
+        <button class="secondary active" id="btn-wl-yes" onclick="setWhitelist(true)">Sí ✓</button>
+        <button class="secondary" id="btn-wl-no" onclick="setWhitelist(false)">No ✗</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>¿Contrato pausado?</label>
+      <div style="display:flex;gap:8px;">
+        <button class="secondary" id="btn-pause-yes" onclick="setPaused(true)">Sí (pausado)</button>
+        <button class="secondary active" id="btn-pause-no" onclick="setPaused(false)">No (activo)</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Cantidad de tokens a comprar (1 token = €1)</label>
+      <input type="number" id="sim-amount" value="100" min="1">
+    </div>
+    <button class="primary" onclick="simBuy()">Llamar buyTokens()</button>
+    <div class="sim-output" id="sim-result">— Configurá los parámetros y llamá buyTokens() —</div>
+  </div>
+</div>
+
+
+<!-- ===== 2. EVM ===== -->
+<div id="evm" class="section">
+  <h2>EVM — Ethereum Virtual Machine</h2>
+  <p>La EVM es el "motor" que ejecuta los smart contracts. Es una computadora virtual que corre en cada nodo de Ethereum simultáneamente, garantizando que todos lleguen exactamente al mismo resultado.</p>
+
+  <div class="card">
+    <div class="card-label">La analogía de la calculadora distribuida</div>
+    <p style="font-size:14px;color:#444;margin-bottom:8px;">Imaginá que tenés 1000 calculadoras idénticas en distintos países. Cada una recibe exactamente los mismos números y operaciones. Si todas llegan al mismo resultado, ese resultado es verdad. Si alguna da un resultado distinto, está rota o mintiendo y la red la ignora.</p>
+    <p style="font-size:14px;color:#444;">La EVM es esa calculadora, corriendo en miles de nodos simultáneamente. Tu smart contract es la operación que le mandás a todas a la vez.</p>
+    <div class="info-box">
+      <strong>Por qué esto importa:</strong> cuando tu contrato ejecuta <code style="font-family:monospace;background:#d0e8fb;padding:1px 4px;border-radius:3px;">buyTokens()</code>, esa función se ejecuta en miles de nodos al mismo tiempo. Todos llegan exactamente al mismo estado final. Eso es lo que hace que el resultado sea confiable sin necesitar un servidor central.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">De Solidity a bytecode — el flujo de compilación</div>
+    <p style="font-size:14px;color:#444;margin-bottom:12px;">Vos (o el especialista) escribe en Solidity. Pero la EVM no entiende Solidity. El compilador lo traduce a bytecode, que es lo que realmente se ejecuta.</p>
+    <div class="code">
+      <span class="c">// Lo que escribe el especialista (Solidity)</span><br>
+      <span class="k">function</span> <span class="n">buyTokens</span>(<span class="t">uint256</span> amount) <span class="k">public</span> {<br>
+      &nbsp;&nbsp;require(whitelist[msg.sender], <span class="s">"No KYC"</span>);<br>
+      &nbsp;&nbsp;balances[msg.sender] += amount;<br>
+      }<br><br>
+      <span class="c">// Lo que ejecuta la EVM (bytecode)</span><br>
+      <span style="color:#666;">60 80 60 40 52 34 80 15 61 00 10 57 60 00 80 fd...</span><br>
+      <span class="c">// (ilegible para humanos, perfecto para máquinas)</span>
+    </div>
+    <div class="info-box">
+      <strong>Para vos como tech lead:</strong> nunca vas a leer bytecode. Vas a leer Solidity. Pero es importante saber que lo que se deploya en la blockchain es bytecode, y que si el código fuente Solidity no está verificado públicamente, nadie puede auditar qué hace el contrato realmente.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Estado global — la "base de datos" de la EVM</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">La EVM mantiene un estado global: un registro de todos los balances, todas las variables de todos los contratos, en todos los nodos. Cuando una transacción ejecuta una función, modifica ese estado.</p>
+    <div class="code">
+      <span class="c">// El estado que guarda tu contrato en la blockchain</span><br>
+      <span class="c">// (simplificado)</span><br><br>
+      mapping(address => <span class="t">uint256</span>) <span class="k">public</span> balances;<br>
+      <span class="c">// balances[0xABC] = 1000   ← Juan tiene 1000 tokens</span><br>
+      <span class="c">// balances[0xDEF] = 500    ← María tiene 500 tokens</span><br><br>
+      mapping(address => <span class="t">bool</span>) <span class="k">public</span> whitelist;<br>
+      <span class="c">// whitelist[0xABC] = true  ← Juan tiene KYC</span><br>
+      <span class="c">// whitelist[0xGHI] = false ← Carlos no tiene KYC</span><br><br>
+      <span class="t">bool</span> <span class="k">public</span> paused = <span class="k">false</span>;<br>
+      <span class="c">// El contrato está activo</span>
+    </div>
+    <p style="font-size:13px;color:#444;margin-top:10px;">Este estado vive en miles de nodos simultáneamente. Es la "base de datos" de tu plataforma que nadie puede alterar unilateralmente.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Gas — el combustible de la EVM</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Cada operación que ejecuta la EVM tiene un costo en gas. Sumar dos números: 3 gas. Guardar un valor en storage: 20.000 gas. Deployar un contrato: 1-3 millones de gas.</p>
+    <table>
+      <tr>
+        <th>Operación</th>
+        <th>Gas aprox.</th>
+        <th>Por qué cuesta eso</th>
+      </tr>
+      <tr>
+        <td>Suma/resta</td>
+        <td>3</td>
+        <td>Operación simple en CPU</td>
+      </tr>
+      <tr>
+        <td>Leer del storage</td>
+        <td>800</td>
+        <td>Todos los nodos deben leer</td>
+      </tr>
+      <tr>
+        <td>Escribir en storage</td>
+        <td>20.000</td>
+        <td>Todos los nodos deben guardar para siempre</td>
+      </tr>
+      <tr>
+        <td>Transferir tokens (ERC-20)</td>
+        <td>~65.000</td>
+        <td>Leer + escribir + emitir evento</td>
+      </tr>
+      <tr>
+        <td>Deploy de contrato</td>
+        <td>1-3M</td>
+        <td>Guardar todo el bytecode en la red</td>
+      </tr>
+    </table>
+    <div class="warn-box" style="margin-top:10px;">
+      <strong>Para tu proyecto:</strong> escribir en storage es lo más caro. Por eso vas a guardar solo lo estrictamente necesario on-chain (balances, whitelist, estado del contrato). Todo lo demás (datos del inmueble, fotos, documentos) va off-chain en tu BD o en IPFS.
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== 3. SOLIDITY ===== -->
+<div id="solidity" class="section">
+  <h2>Solidity — leer código sin escribirlo</h2>
+  <p>No vas a escribir Solidity. Pero sí vas a <strong>leer, entender y auditar</strong> lo que escribe el especialista. Esta sección te da el vocabulario mínimo para hacerlo con criterio.</p>
+
+  <div class="card">
+    <div class="card-label">Estructura de un contrato — el esqueleto</div>
+    <p style="font-size:13px;color:#444;margin-bottom:10px;">Seleccioná cada parte para ver qué significa:</p>
+    <div style="margin-bottom:10px;">
+      <button class="secondary active" onclick="showSolPart('all')">Todo</button>
+      <button class="secondary" onclick="showSolPart('pragma')">Versión</button>
+      <button class="secondary" onclick="showSolPart('state')">Variables</button>
+      <button class="secondary" onclick="showSolPart('events')">Eventos</button>
+      <button class="secondary" onclick="showSolPart('modifiers')">Modificadores</button>
+      <button class="secondary" onclick="showSolPart('functions')">Funciones</button>
+    </div>
+    <div class="code" id="sol-code"></div>
+    <div class="info-box" id="sol-explanation" style="margin-top:10px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Tipos de datos más comunes — lo que vas a ver en el código</div>
+    <table>
+      <tr>
+        <th>Tipo</th>
+        <th>Qué es</th>
+        <th>Ejemplo en tu proyecto</th>
+      </tr>
+      <tr>
+        <td><code style="font-family:monospace;">uint256</code></td>
+        <td>Número entero positivo (0 a 2²⁵⁶)</td>
+        <td>Cantidad de tokens, precios en wei</td>
+      </tr>
+      <tr>
+        <td><code style="font-family:monospace;">address</code></td>
+        <td>Dirección de wallet o contrato (20 bytes)</td>
+        <td>Wallet del inversor, wallet admin</td>
+      </tr>
+      <tr>
+        <td><code style="font-family:monospace;">bool</code></td>
+        <td>true / false</td>
+        <td>whitelist[wallet], paused</td>
+      </tr>
+      <tr>
+        <td><code style="font-family:monospace;">string</code></td>
+        <td>Texto (caro en gas, evitar on-chain)</td>
+        <td>Nombre del token ("LADRILLO")</td>
+      </tr>
+      <tr>
+        <td><code style="font-family:monospace;">mapping</code></td>
+        <td>Diccionario clave → valor</td>
+        <td>balances[address] = uint256</td>
+      </tr>
+      <tr>
+        <td><code style="font-family:monospace;">bytes32</code></td>
+        <td>32 bytes fijos (más barato que string)</td>
+        <td>Identificador de inmueble, hash de documento</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Visibilidad de funciones — quién puede llamar qué</div>
+    <table>
+      <tr>
+        <th>Keyword</th>
+        <th>Quién puede llamarla</th>
+        <th>Cuándo usarla</th>
+      </tr>
+      <tr>
+        <td><code style="font-family:monospace;">public</code></td>
+        <td>Cualquiera (externos + el propio contrato)</td>
+        <td>buyTokens(), transfer()</td>
+      </tr>
+      <tr>
+        <td><code style="font-family:monospace;">external</code></td>
+        <td>Solo desde fuera del contrato</td>
+        <td>Funciones de interfaz pública</td>
+      </tr>
+      <tr>
+        <td><code style="font-family:monospace;">internal</code></td>
+        <td>Solo el contrato y contratos que hereden</td>
+        <td>Lógica interna reutilizable</td>
+      </tr>
+      <tr>
+        <td><code style="font-family:monospace;">private</code></td>
+        <td>Solo el contrato exacto</td>
+        <td>Lógica que nadie más debe usar</td>
+      </tr>
+    </table>
+    <div class="warn-box" style="margin-top:10px;">
+      <strong>Trampa común:</strong> <code style="font-family:monospace;">private</code> no significa "secreto". Los datos en blockchain son públicos. <code style="font-family:monospace;">private</code> solo significa que otros contratos no pueden llamar esa función, pero cualquier persona puede leer el storage directamente desde la blockchain.
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== 4. FUNCIONES ===== -->
+<div id="funciones" class="section">
+  <h2>Funciones, eventos y modificadores</h2>
+  <p>Los tres bloques de construcción de cualquier smart contract. Entendelos y podés auditar el 80% del código que te muestre el especialista.</p>
+
+  <div class="card">
+    <div class="card-label">Funciones — los puntos de entrada del contrato</div>
+    <p style="font-size:13px;color:#444;margin-bottom:10px;">Hacé click en cada función para ver qué hace y cuándo la llamarías en tu proyecto:</p>
+    <div style="margin-bottom:10px;display:flex;flex-wrap:wrap;gap:6px;">
+      <button class="secondary" onclick="showFunc('buy')">buyTokens() <span class="tag write">escribe</span></button>
+      <button class="secondary" onclick="showFunc('balance')">balanceOf() <span class="tag view">lee</span></button>
+      <button class="secondary" onclick="showFunc('whitelist')">addToWhitelist() <span class="tag write">escribe</span></button>
+      <button class="secondary" onclick="showFunc('freeze')">freeze() <span class="tag write">escribe</span></button>
+      <button class="secondary" onclick="showFunc('distribute')">distributeRent() <span class="tag write">escribe</span></button>
+      <button class="secondary" onclick="showFunc('pause')">pause() <span class="tag write">escribe</span></button>
+    </div>
+    <div class="code" id="func-code">— seleccioná una función —</div>
+    <div id="func-explanation" style="margin-top:10px;font-size:13px;color:#444;display:none;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Eventos — el sistema de logs de blockchain</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Los eventos son registros inmutables que el contrato emite cuando algo importante sucede. Tu backend los escucha para saber qué pasó on-chain.</p>
+    <div class="code">
+      <span class="c">// Definición de eventos en el contrato</span><br>
+      <span class="k">event</span> <span class="n">TokensPurchased</span>(<br>
+      &nbsp;&nbsp;<span class="k">address indexed</span> buyer,<br>
+      &nbsp;&nbsp;<span class="t">uint256</span> amount,<br>
+      &nbsp;&nbsp;<span class="t">uint256</span> timestamp<br>
+      );<br><br>
+      <span class="k">event</span> <span class="n">WalletFrozen</span>(<span class="k">address indexed</span> wallet);<br>
+      <span class="k">event</span> <span class="n">RentDistributed</span>(<span class="t">uint256</span> totalAmount);<br><br>
+      <span class="c">// Dentro de buyTokens(), el contrato emite:</span><br>
+      <span class="k">emit</span> TokensPurchased(msg.sender, amount, block.timestamp);
+    </div>
+    <div class="info-box" style="margin-top:10px;">
+      <strong>Para tu backend .NET:</strong> los eventos son tu WebSocket de la blockchain. Tu backend se suscribe a eventos específicos via Alchemy/Infura y reacciona cuando ocurren. Cuando el contrato emite <code style="font-family:monospace;">TokensPurchased</code>, tu backend lo recibe y actualiza el estado en Postgres.
+    </div>
+    <div class="code" style="margin-top:10px;">
+      <span class="c">// Tu backend C# escuchando eventos</span><br>
+      <span class="k">var</span> eventHandler = contract<br>
+      &nbsp;&nbsp;.GetEvent&lt;<span class="t">TokensPurchasedEventDTO</span>&gt;()<br>
+      &nbsp;&nbsp;.CreateFilterInput();<br><br>
+      <span class="k">var</span> logs = <span class="k">await</span> web3.Eth.Filters<br>
+      &nbsp;&nbsp;.GetLogs.SendRequestAsync(eventHandler);<br><br>
+      <span class="k">foreach</span> (<span class="k">var</span> log <span class="k">in</span> logs) {<br>
+      &nbsp;&nbsp;<span class="c">// Actualizar Postgres con la compra confirmada</span><br>
+      &nbsp;&nbsp;<span class="k">await</span> UpdatePurchaseStatus(log.Buyer, log.Amount);<br>
+      }
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Modificadores — los guardias de seguridad del contrato</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Un modificador es código que se ejecuta <strong>antes</strong> de la función. Es el middleware de Solidity. Si el modificador falla, la función no se ejecuta.</p>
+    <div class="code">
+      <span class="c">// Definición de modificadores</span><br>
+      <span class="k">modifier</span> <span class="n">onlyOwner</span>() {<br>
+      &nbsp;&nbsp;require(msg.sender == owner, <span class="s">"Solo el admin"</span>);<br>
+      &nbsp;&nbsp;_; <span class="c">// acá se ejecuta la función</span><br>
+      }<br><br>
+      <span class="k">modifier</span> <span class="n">onlyWhitelisted</span>() {<br>
+      &nbsp;&nbsp;require(whitelist[msg.sender], <span class="s">"Sin KYC"</span>);<br>
+      &nbsp;&nbsp;_;<br>
+      }<br><br>
+      <span class="k">modifier</span> <span class="n">whenNotPaused</span>() {<br>
+      &nbsp;&nbsp;require(!paused, <span class="s">"Contrato pausado"</span>);<br>
+      &nbsp;&nbsp;_;<br>
+      }<br><br>
+      <span class="c">// Usados en funciones:</span><br>
+      <span class="k">function</span> buyTokens(<span class="t">uint256</span> amount)<br>
+      &nbsp;&nbsp;<span class="k">public</span><br>
+      &nbsp;&nbsp;<span class="n">onlyWhitelisted</span> <span class="c">← verifica KYC</span><br>
+      &nbsp;&nbsp;<span class="n">whenNotPaused</span>  <span class="c">← verifica que no esté pausado</span><br>
+      {<br>
+      &nbsp;&nbsp;<span class="c">// solo llega acá si pasó ambos modificadores</span><br>
+      &nbsp;&nbsp;balances[msg.sender] += amount;<br>
+      }
+    </div>
+    <div class="info-box" style="margin-top:10px;">
+      <strong>La analogía:</strong> los modificadores son como los guardias en la entrada de un edificio. Antes de que entre cualquiera a la función, los guardias verifican: ¿tenés KYC? ¿el contrato está activo? ¿sos el admin? Si algún guardia dice no, te rechaza en la puerta y la función nunca se ejecuta.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Simulador — ejecutá funciones del contrato de Ladrillo</div>
+    <div class="field">
+      <label>Tu address (wallet)</label>
+      <input type="text" id="fn-address" value="0xABC123...">
+    </div>
+    <div class="field">
+      <label>Estado del contrato</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="secondary active" id="fn-wl-yes" onclick="fnSetWl(true)">En whitelist ✓</button>
+        <button class="secondary" id="fn-wl-no" onclick="fnSetWl(false)">Sin whitelist ✗</button>
+        <button class="secondary active" id="fn-run" onclick="fnSetPaused(false)">Contrato activo</button>
+        <button class="secondary" id="fn-pause" onclick="fnSetPaused(true)">Contrato pausado</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+      <button class="secondary" onclick="fnCall('buy')">buyTokens(100)</button>
+      <button class="secondary" onclick="fnCall('balance')">balanceOf()</button>
+      <button class="secondary" onclick="fnCall('freeze')">freeze() [solo admin]</button>
+    </div>
+    <div class="sim-output" id="fn-output">— Seleccioná una función para ejecutar —</div>
+  </div>
+</div>
+
+
+<!-- ===== 5. ERC ===== -->
+<div id="erc" class="section">
+  <h2>Estándares ERC — los contratos que vas a usar</h2>
+  <p>ERC significa "Ethereum Request for Comments". Son estándares acordados por la comunidad que definen cómo debe comportarse un tipo de contrato. Si tu contrato implementa un estándar, cualquier wallet, exchange o plataforma puede interactuar con él automáticamente.</p>
+
+  <div class="card">
+    <div class="card-label">Los tres estándares relevantes para tu proyecto</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      <button class="secondary active" onclick="showERC('20')">ERC-20</button>
+      <button class="secondary" onclick="showERC('1400')">ERC-1400</button>
+      <button class="secondary" onclick="showERC('3643')">ERC-3643</button>
+    </div>
+    <div id="erc-content"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">¿Cuál usás en Ladrillo?</div>
+    <table>
+      <tr>
+        <th></th>
+        <th>ERC-20</th>
+        <th>ERC-1400</th>
+        <th>ERC-3643</th>
+      </tr>
+      <tr>
+        <td>Transfer restrictions</td>
+        <td style="color:#791f1f;">No</td>
+        <td style="color:#27500a;">Sí</td>
+        <td style="color:#27500a;">Sí</td>
+      </tr>
+      <tr>
+        <td>KYC / Whitelist</td>
+        <td style="color:#791f1f;">No nativo</td>
+        <td style="color:#633806;">Parcial</td>
+        <td style="color:#27500a;">Sí, nativo</td>
+      </tr>
+      <tr>
+        <td>Freeze de wallet</td>
+        <td style="color:#791f1f;">No</td>
+        <td style="color:#27500a;">Sí</td>
+        <td style="color:#27500a;">Sí</td>
+      </tr>
+      <tr>
+        <td>Compliance regulatorio</td>
+        <td style="color:#791f1f;">No</td>
+        <td style="color:#633806;">Básico</td>
+        <td style="color:#27500a;">Completo (MiCA)</td>
+      </tr>
+      <tr>
+        <td>Adoptado en España</td>
+        <td style="color:#791f1f;">No para esto</td>
+        <td style="color:#633806;">Algunos</td>
+        <td style="color:#27500a;">Reental, otros</td>
+      </tr>
+      <tr>
+        <td>Recomendación Ladrillo</td>
+        <td style="color:#791f1f;">❌</td>
+        <td style="color:#633806;">⚠ posible</td>
+        <td style="color:#27500a;">✓ ideal</td>
+      </tr>
+    </table>
+    <div class="success-box" style="margin-top:10px;">
+      <strong>Conclusión:</strong> ERC-3643 (implementado por Tokeny) es el estándar de facto para security tokens regulados en Europa. Incluye KYC on-chain, transfer restrictions, freeze, y está diseñado explícitamente para cumplir con MiCA. Es lo que usás en Ladrillo y lo que el especialista blockchain debería implementar.
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== 6. BACKEND ===== -->
+<div id="backend" class="section">
+  <h2>Conectar tu backend .NET con los contratos</h2>
+  <p>Acá es donde tu experiencia de backend entra en juego. Conectar un contrato a tu API .NET es más parecido a integrar una API externa que a programar blockchain.</p>
+
+  <div class="card">
+    <div class="card-label">La librería: Nethereum</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">Nethereum es la librería .NET equivalente a ethers.js. Te permite conectarte a la blockchain, leer estado de contratos, y enviar transacciones desde C#.</p>
+    <div class="code">
+      <span class="c">// NuGet: Install-Package Nethereum.Web3</span><br><br>
+      <span class="k">var</span> web3 = <span class="k">new</span> Web3(<span class="s">"https://polygon-rpc.com"</span>);<br>
+      <span class="k">var</span> contract = web3.Eth.GetContract(abi, contractAddress);<br><br>
+      <span class="c">// Leer balance de un inversor (gratis, no gasta gas)</span><br>
+      <span class="k">var</span> balanceFunc = contract.GetFunction(<span class="s">"balanceOf"</span>);<br>
+      <span class="k">var</span> balance = <span class="k">await</span> balanceFunc<br>
+      &nbsp;&nbsp;.CallAsync&lt;<span class="t">BigInteger</span>&gt;(investorAddress);<br><br>
+      <span class="c">// Llamar función que escribe (gasta gas, requiere firma)</span><br>
+      <span class="k">var</span> whitelistFunc = contract.GetFunction(<span class="s">"addToWhitelist"</span>);<br>
+      <span class="k">var</span> receipt = <span class="k">await</span> whitelistFunc<br>
+      &nbsp;&nbsp;.SendTransactionAndWaitForReceiptAsync(<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;adminWallet, gas, <span class="k">null</span>, investorAddress<br>
+      &nbsp;&nbsp;);
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Leer vs Escribir — la diferencia más importante</div>
+    <table>
+      <tr>
+        <th></th>
+        <th>Leer (call)</th>
+        <th>Escribir (send)</th>
+      </tr>
+      <tr>
+        <td>Ejemplos</td>
+        <td>balanceOf(), isWhitelisted()</td>
+        <td>buyTokens(), freeze(), transfer()</td>
+      </tr>
+      <tr>
+        <td>¿Gasta gas?</td>
+        <td style="color:#27500a;">No, gratis</td>
+        <td style="color:#791f1f;">Sí, siempre</td>
+      </tr>
+      <tr>
+        <td>¿Necesita firma?</td>
+        <td style="color:#27500a;">No</td>
+        <td style="color:#791f1f;">Sí, clave privada</td>
+      </tr>
+      <tr>
+        <td>¿Resultado inmediato?</td>
+        <td style="color:#27500a;">Sí</td>
+        <td style="color:#791f1f;">No, esperar confirmaciones</td>
+      </tr>
+      <tr>
+        <td>¿Modifica el estado?</td>
+        <td style="color:#27500a;">No</td>
+        <td style="color:#791f1f;">Sí</td>
+      </tr>
+    </table>
+    <div class="info-box" style="margin-top:10px;">
+      <strong>La regla de oro:</strong> si solo necesitás saber algo (¿cuántos tokens tiene Juan?), es una lectura gratuita e instantánea. Si necesitás cambiar algo (agregar a whitelist, transferir tokens), es una escritura que cuesta gas y necesita confirmaciones. Diseñá tu API sabiendo esto.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">El flujo completo de una compra — tu backend orquesta todo</div>
+    <div class="code">
+      <span class="c">// 1. Inversor llama a tu API</span><br>
+      <span class="c">// POST /api/tokens/buy { amount: 1000 }</span><br><br>
+      <span class="c">// 2. Tu backend valida</span><br>
+      <span class="k">var</span> investor = <span class="k">await</span> _db.Investors.FindAsync(userId);<br>
+      <span class="k">if</span> (investor.KycStatus != <span class="s">"APPROVED"</span>) <span class="k">return</span> Forbid();<br><br>
+      <span class="c">// 3. Privy firma la tx del inversor</span><br>
+      <span class="k">var</span> txHash = <span class="k">await</span> _privy.SignAndSend(<br>
+      &nbsp;&nbsp;investor.WalletAddress,<br>
+      &nbsp;&nbsp;<span class="s">"buyTokens"</span>,<br>
+      &nbsp;&nbsp;amount: 1000<br>
+      );<br><br>
+      <span class="c">// 4. Guardás estado pendiente en Postgres</span><br>
+      _db.Purchases.Add(<span class="k">new</span> Purchase {<br>
+      &nbsp;&nbsp;TxHash = txHash,<br>
+      &nbsp;&nbsp;Status = <span class="s">"PENDING"</span>,<br>
+      &nbsp;&nbsp;Amount = 1000,<br>
+      &nbsp;&nbsp;InvestorId = investor.Id<br>
+      });<br><br>
+      <span class="c">// 5. Job escucha el evento TokensPurchased</span><br>
+      <span class="c">// Cuando llega con 12 confirmaciones:</span><br>
+      purchase.Status = <span class="s">"CONFIRMED"</span>;<br>
+      <span class="k">await</span> _hub.NotifyInvestor(investor.Id, <span class="s">"✓ Tokens acreditados"</span>);
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">ABI — el "contrato de interfaz" entre tu backend y el contrato</div>
+    <p style="font-size:14px;color:#444;margin-bottom:10px;">El ABI (Application Binary Interface) es un JSON que describe todas las funciones y eventos del contrato. Tu backend lo necesita para saber cómo encodear y decodear las llamadas.</p>
+    <div class="code">
+      <span class="c">// ABI simplificado del contrato de Ladrillo</span><br>
+      [<br>
+      &nbsp;&nbsp;{<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"name"</span>: <span class="s">"buyTokens"</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"type"</span>: <span class="s">"function"</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"inputs"</span>: [{ <span class="s">"name"</span>: <span class="s">"amount"</span>, <span class="s">"type"</span>: <span class="s">"uint256"</span> }],<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"stateMutability"</span>: <span class="s">"payable"</span><br>
+      &nbsp;&nbsp;},<br>
+      &nbsp;&nbsp;{<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"name"</span>: <span class="s">"balanceOf"</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"type"</span>: <span class="s">"function"</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"inputs"</span>: [{ <span class="s">"name"</span>: <span class="s">"account"</span>, <span class="s">"type"</span>: <span class="s">"address"</span> }],<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"outputs"</span>: [{ <span class="s">"type"</span>: <span class="s">"uint256"</span> }],<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"stateMutability"</span>: <span class="s">"view"</span><br>
+      &nbsp;&nbsp;}<br>
+      ]
+    </div>
+    <div class="info-box" style="margin-top:10px;">
+      <strong>En la práctica:</strong> el especialista te entrega el ABI junto con la dirección del contrato deployado. Con esos dos datos, tu backend puede interactuar con el contrato completamente. Es como recibir la documentación de una API externa.
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== EJERCICIO ===== -->
+<div id="ejercicio" class="section">
+  <h2>Ejercicio de la Sección 4</h2>
+
+  <div class="exercise">
+    <div class="exercise-title">Pregunta 1 — Máquina expendedora</div>
+    <ol>
+      <li>Andá al simulador de la pestaña "1 · Qué son". Probá estas combinaciones y explicá por qué cada una falla o funciona: (a) sin whitelist + activo + €500 comprando 100 tokens. (b) con whitelist + pausado + €500 comprando 100 tokens. (c) con whitelist + activo + €50 comprando 100 tokens.</li>
+    </ol>
+  </div>
+
+  <div class="exercise" style="margin-top:12px;">
+    <div class="exercise-title">Pregunta 2 — Leer Solidity</div>
+    <ol>
+      <li>Mirá este fragmento de código. Sin saber Solidity, decí: ¿quién puede llamar esta función? ¿qué verifica antes de ejecutarse? ¿qué hace exactamente? ¿emite algún evento?</li>
+    </ol>
+    <div class="code" style="margin-top:10px;">
+      <span class="k">function</span> <span class="n">distributeRent</span>(<span class="t">uint256</span> totalRent)<br>
+      &nbsp;&nbsp;<span class="k">external</span><br>
+      &nbsp;&nbsp;<span class="n">onlyOwner</span><br>
+      &nbsp;&nbsp;<span class="n">whenNotPaused</span><br>
+      {<br>
+      &nbsp;&nbsp;require(totalRent > 0, <span class="s">"Monto inválido"</span>);<br>
+      &nbsp;&nbsp;<span class="k">for</span> (<span class="t">uint256</span> i = 0; i &lt; holders.length; i++) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="t">address</span> holder = holders[i];<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="t">uint256</span> share = (balances[holder] * totalRent) / totalSupply;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;rentOwed[holder] += share;<br>
+      &nbsp;&nbsp;}<br>
+      &nbsp;&nbsp;<span class="k">emit</span> RentDistributed(totalRent);<br>
+      }
+    </div>
+  </div>
+
+  <div class="exercise" style="margin-top:12px;">
+    <div class="exercise-title">Pregunta 3 — Diseño de sistema (la más importante)</div>
+    <ol>
+      <li>El contrato de Ladrillo tiene un bug crítico descubierto después del deploy: la función <code style="font-family:monospace;">distributeRent()</code> tiene un error de redondeo que acredita 1 wei de más a cada holder. Son 500 holders. ¿Qué opciones tenés? ¿Podés hacer hotfix? ¿Qué harías primero? ¿Qué le decís al cliente?</li>
+    </ol>
+  </div>
+
+  <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid #d3d1c7;font-size:13px;color:#666;">
+    Cuando respondas estas tres preguntas, pasamos a la Sección 5: ERC-3643 en profundidad, arquitectura on-chain/off-chain del proyecto real, y cómo coordinás con el especialista blockchain.
+  </div>
+</div>
+
+
+<script>
+// ===== NAV =====
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = ['que','evm','solidity','funciones','erc','backend','ejercicio'].indexOf(id);
+  document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+}
+
+// ===== SIMULATOR 1 — VENDING MACHINE =====
+let simWhitelist = true;
+let simPaused = false;
+
+function setWhitelist(v) {
+  simWhitelist = v;
+  document.getElementById('btn-wl-yes').className = 'secondary' + (v ? ' active' : '');
+  document.getElementById('btn-wl-no').className  = 'secondary' + (!v ? ' active' : '');
+}
+function setPaused(v) {
+  simPaused = v;
+  document.getElementById('btn-pause-yes').className = 'secondary' + (v ? ' active' : '');
+  document.getElementById('btn-pause-no').className  = 'secondary' + (!v ? ' active' : '');
+}
+function simBuy() {
+  const balance = parseFloat(document.getElementById('sim-balance').value);
+  const amount  = parseFloat(document.getElementById('sim-amount').value);
+  const out = document.getElementById('sim-result');
+  const steps = [];
+  let ok = true;
+
+  steps.push('→ Llamando buyTokens(' + amount + ')...');
+  steps.push('→ Ejecutando modificador whenNotPaused()...');
+  if (simPaused) {
+    steps.push('✗ REVERT: "Contrato pausado"');
+    out.className = 'sim-output err';
+    out.textContent = steps.join('\n');
+    return;
+  }
+  steps.push('  ✓ Contrato activo');
+  steps.push('→ Ejecutando modificador onlyWhitelisted()...');
+  if (!simWhitelist) {
+    steps.push('✗ REVERT: "Sin KYC aprobado"');
+    out.className = 'sim-output err';
+    out.textContent = steps.join('\n');
+    return;
+  }
+  steps.push('  ✓ Wallet en whitelist');
+  steps.push('→ Verificando balance suficiente...');
+  if (balance < amount) {
+    steps.push('✗ REVERT: "Balance insuficiente. Tenés €' + balance + ', necesitás €' + amount + '"');
+    out.className = 'sim-output err';
+    out.textContent = steps.join('\n');
+    return;
+  }
+  steps.push('  ✓ Balance suficiente (€' + balance + ' >= €' + amount + ')');
+  steps.push('→ Actualizando balances[msg.sender] += ' + amount + '...');
+  steps.push('→ emit TokensPurchased(msg.sender, ' + amount + ', timestamp)');
+  steps.push('✓ ÉXITO: ' + amount + ' tokens acreditados. Gas usado: ~65.000');
+  out.className = 'sim-output ok';
+  out.textContent = steps.join('\n');
+}
+
+// ===== SOLIDITY PARTS =====
+const solParts = {
+  all: {
+    code: `<span class="c">// SPDX-License-Identifier: MIT</span>
+<span class="k">pragma solidity</span> ^0.8.20;   <span class="c">← versión del compilador</span>
+
+<span class="k">contract</span> <span class="n">LadrilloToken</span> {
+
+  <span class="c">// ── VARIABLES DE ESTADO ──────────────────</span>
+  <span class="k">address public</span> owner;
+  <span class="t">bool</span> <span class="k">public</span> paused = <span class="k">false</span>;
+  mapping(<span class="t">address</span> => <span class="t">uint256</span>) <span class="k">public</span> balances;
+  mapping(<span class="t">address</span> => <span class="t">bool</span>)    <span class="k">public</span> whitelist;
+
+  <span class="c">// ── EVENTOS ──────────────────────────────</span>
+  <span class="k">event</span> <span class="n">TokensPurchased</span>(<span class="k">address indexed</span> buyer, <span class="t">uint256</span> amount);
+  <span class="k">event</span> <span class="n">WalletFrozen</span>(<span class="k">address indexed</span> wallet);
+
+  <span class="c">// ── MODIFICADORES ────────────────────────</span>
+  <span class="k">modifier</span> <span class="n">onlyOwner</span>()       { require(msg.sender == owner); _; }
+  <span class="k">modifier</span> <span class="n">onlyWhitelisted</span>() { require(whitelist[msg.sender]); _; }
+  <span class="k">modifier</span> <span class="n">whenNotPaused</span>()  { require(!paused); _; }
+
+  <span class="c">// ── FUNCIONES ────────────────────────────</span>
+  <span class="k">function</span> <span class="n">buyTokens</span>(<span class="t">uint256</span> amount) <span class="k">public onlyWhitelisted whenNotPaused</span> {
+    balances[msg.sender] += amount;
+    <span class="k">emit</span> TokensPurchased(msg.sender, amount);
+  }
+
+  <span class="k">function</span> <span class="n">freeze</span>(<span class="t">address</span> wallet) <span class="k">external onlyOwner</span> {
+    whitelist[wallet] = <span class="k">false</span>;
+    <span class="k">emit</span> WalletFrozen(wallet);
+  }
+}`,
+    explanation: 'Este es el contrato completo de Ladrillo simplificado. Tiene las 4 secciones principales: versión del compilador, variables de estado (la "base de datos" del contrato), eventos (los logs), modificadores (los guardias), y funciones (los puntos de entrada).'
+  },
+  pragma: {
+    code: `<span class="c">// SPDX-License-Identifier: MIT</span>
+<span class="k">pragma solidity</span> ^0.8.20;
+<span class="c">
+// ^0.8.20 significa: "compilar con versión
+// 0.8.20 o superior, pero menor a 0.9.0"
+// 
+// Si el especialista usa una versión vieja
+// (ej: 0.6.x) preguntá por qué.
+// Las versiones recientes tienen fixes
+// de seguridad importantes.</span>`,
+    explanation: 'La versión del compilador es crítica. Cada versión de Solidity puede tener diferencias de comportamiento y fixes de seguridad. Como tech lead, verificá que el especialista use una versión reciente y estable (0.8.x).'
+  },
+  state: {
+    code: `<span class="c">// Variables de estado — viven en la blockchain</span>
+<span class="k">address public</span> owner;
+<span class="c">// La wallet que deployó el contrato. Tiene poderes de admin.</span>
+
+<span class="t">bool</span> <span class="k">public</span> paused = <span class="k">false</span>;
+<span class="c">// Si es true, la mayoría de funciones se bloquean.</span>
+
+<span class="t">uint256</span> <span class="k">public</span> totalSupply;
+<span class="c">// Total de tokens emitidos.</span>
+
+mapping(<span class="t">address</span> => <span class="t">uint256</span>) <span class="k">public</span> balances;
+<span class="c">// balances[0xABC] = 1000 → Juan tiene 1000 tokens</span>
+
+mapping(<span class="t">address</span> => <span class="t">bool</span>) <span class="k">public</span> whitelist;
+<span class="c">// whitelist[0xABC] = true → Juan tiene KYC aprobado</span>`,
+    explanation: 'Las variables de estado son la "base de datos" del contrato. Se guardan en el storage de la blockchain y persisten para siempre. Cada variable declarada como "public" genera automáticamente una función de lectura gratuita.'
+  },
+  events: {
+    code: `<span class="c">// Eventos — logs inmutables de lo que pasó</span>
+<span class="k">event</span> <span class="n">TokensPurchased</span>(
+  <span class="k">address indexed</span> buyer,   <span class="c">← "indexed" = filtrable</span>
+  <span class="t">uint256</span> amount,
+  <span class="t">uint256</span> timestamp
+);
+
+<span class="k">event</span> <span class="n">WalletFrozen</span>(<span class="k">address indexed</span> wallet);
+<span class="k">event</span> <span class="n">RentDistributed</span>(<span class="t">uint256</span> totalAmount);
+<span class="k">event</span> <span class="n">WhitelistUpdated</span>(<span class="k">address indexed</span> wallet, <span class="t">bool</span> status);
+
+<span class="c">// Los eventos se emiten dentro de las funciones:</span>
+<span class="k">emit</span> TokensPurchased(msg.sender, 1000, block.timestamp);`,
+    explanation: 'Los eventos son los "logs" de la blockchain. Tu backend los escucha via Alchemy/Infura para saber qué pasó sin tener que consultar el estado constantemente. "indexed" permite filtrar eventos por esa dirección específica.'
+  },
+  modifiers: {
+    code: `<span class="c">// Modificadores — middleware de Solidity</span>
+<span class="k">modifier</span> <span class="n">onlyOwner</span>() {
+  require(msg.sender == owner, <span class="s">"Solo admin"</span>);
+  _; <span class="c">← acá se ejecuta la función si pasó el require</span>
+}
+
+<span class="k">modifier</span> <span class="n">onlyWhitelisted</span>() {
+  require(whitelist[msg.sender], <span class="s">"Sin KYC"</span>);
+  _;
+}
+
+<span class="k">modifier</span> <span class="n">whenNotPaused</span>() {
+  require(!paused, <span class="s">"Contrato pausado"</span>);
+  _;
+}
+
+<span class="c">// Se combinan en las funciones:</span>
+<span class="k">function</span> <span class="n">buyTokens</span>() <span class="k">public onlyWhitelisted whenNotPaused</span> { ... }
+<span class="k">function</span> <span class="n">freeze</span>()    <span class="k">external onlyOwner</span> { ... }`,
+    explanation: 'Los modificadores son guardias que se ejecutan antes de la función. Si el require() falla, la transacción se revierte (revert) y el estado no cambia. Es el patrón de autorización más común en Solidity.'
+  },
+  functions: {
+    code: `<span class="c">// Funciones — los puntos de entrada</span>
+
+<span class="c">// Lee estado — gratis, sin firma, instantáneo</span>
+<span class="k">function</span> <span class="n">balanceOf</span>(<span class="t">address</span> acc) <span class="k">public view returns</span> (<span class="t">uint256</span>) {
+  <span class="k">return</span> balances[acc];
+}
+
+<span class="c">// Escribe estado — cuesta gas, necesita firma</span>
+<span class="k">function</span> <span class="n">buyTokens</span>(<span class="t">uint256</span> amount)
+  <span class="k">public</span>
+  <span class="n">onlyWhitelisted</span>
+  <span class="n">whenNotPaused</span>
+{
+  balances[msg.sender] += amount;
+  totalSupply += amount;
+  <span class="k">emit</span> TokensPurchased(msg.sender, amount, block.timestamp);
+}`,
+    explanation: '"view" significa que la función solo lee, no modifica nada. Es gratis y no necesita firma. Las funciones sin "view" modifican el estado, gastan gas y necesitan ser firmadas por una wallet.'
+  }
+};
+
+function showSolPart(part) {
+  document.getElementById('sol-code').innerHTML = solParts[part].code;
+  document.getElementById('sol-explanation').textContent = solParts[part].explanation;
+  document.querySelectorAll('[onclick^="showSolPart"]').forEach(b => {
+    b.className = 'secondary' + (b.getAttribute('onclick').includes("'"+part+"'") ? ' active' : '');
+  });
+}
+showSolPart('all');
+
+// ===== FUNCTION EXPLORER =====
+const funcs = {
+  buy: {
+    code: `<span class="k">function</span> <span class="n">buyTokens</span>(<span class="t">uint256</span> amount)
+  <span class="k">public</span>
+  <span class="n">onlyWhitelisted</span>   <span class="c">← verifica KYC</span>
+  <span class="n">whenNotPaused</span>    <span class="c">← verifica que esté activo</span>
+{
+  require(amount > 0, <span class="s">"Monto inválido"</span>);
+  balances[msg.sender] += amount;
+  totalSupply += amount;
+  <span class="k">emit</span> TokensPurchased(msg.sender, amount, block.timestamp);
+}`,
+    explanation: '¿Quién la llama? Cualquier inversor con KYC. Tu backend la dispara via Privy cuando el inversor compra. El contrato verifica automáticamente que tenga KYC y que el contrato esté activo antes de acreditar los tokens.'
+  },
+  balance: {
+    code: `<span class="k">function</span> <span class="n">balanceOf</span>(<span class="t">address</span> account)
+  <span class="k">public</span>
+  <span class="k">view</span>   <span class="c">← solo lectura, gratis</span>
+  <span class="k">returns</span> (<span class="t">uint256</span>)
+{
+  <span class="k">return</span> balances[account];
+}`,
+    explanation: '¿Quién la llama? Tu backend cada vez que necesita mostrar el balance de un inversor. No gasta gas, es instantánea. Podés llamarla miles de veces sin costo. El dashboard de inversores la llama en cada refresh.'
+  },
+  whitelist: {
+    code: `<span class="k">function</span> <span class="n">addToWhitelist</span>(<span class="t">address</span> wallet)
+  <span class="k">external</span>
+  <span class="n">onlyOwner</span>   <span class="c">← solo tu wallet admin</span>
+{
+  whitelist[wallet] = <span class="k">true</span>;
+  <span class="k">emit</span> WhitelistUpdated(wallet, <span class="k">true</span>);
+}`,
+    explanation: '¿Quién la llama? Tu backend (wallet admin) automáticamente cuando Sumsub aprueba el KYC de un inversor. El webhook de Sumsub llega a tu API → tu API llama addToWhitelist() → el inversor puede operar.'
+  },
+  freeze: {
+    code: `<span class="k">function</span> <span class="n">freeze</span>(<span class="t">address</span> wallet)
+  <span class="k">external</span>
+  <span class="n">onlyOwner</span>   <span class="c">← solo tu wallet admin</span>
+{
+  whitelist[wallet] = <span class="k">false</span>;
+  frozen[wallet] = <span class="k">true</span>;
+  <span class="k">emit</span> WalletFrozen(wallet);
+}`,
+    explanation: '¿Quién la llama? Tu backend cuando un inversor aparece en listas de sanciones o hay una orden del regulador. Consecuencia: el inversor no puede comprar, vender ni transferir tokens. Sus tokens siguen en la blockchain pero inutilizables.'
+  },
+  distribute: {
+    code: `<span class="k">function</span> <span class="n">distributeRent</span>(<span class="t">uint256</span> totalRent)
+  <span class="k">external</span>
+  <span class="n">onlyOwner</span>
+  <span class="n">whenNotPaused</span>
+{
+  require(totalRent > 0, <span class="s">"Monto inválido"</span>);
+  <span class="k">for</span> (<span class="t">uint256</span> i = 0; i &lt; holders.length; i++) {
+    <span class="t">address</span> holder = holders[i];
+    <span class="t">uint256</span> share = (balances[holder] * totalRent) / totalSupply;
+    rentOwed[holder] += share;
+  }
+  <span class="k">emit</span> RentDistributed(totalRent);
+}`,
+    explanation: '¿Quién la llama? Tu backend una vez al mes cuando cobrás el alquiler del inquilino. Calcula proporcionalmente cuánto le corresponde a cada holder según sus tokens. Cada holder después puede reclamar su parte con claimRent().'
+  },
+  pause: {
+    code: `<span class="k">function</span> <span class="n">pause</span>() <span class="k">external</span> <span class="n">onlyOwner</span> {
+  paused = <span class="k">true</span>;
+  <span class="k">emit</span> ContractPaused(block.timestamp);
+}
+
+<span class="k">function</span> <span class="n">unpause</span>() <span class="k">external</span> <span class="n">onlyOwner</span> {
+  paused = <span class="k">false</span>;
+  <span class="k">emit</span> ContractUnpaused(block.timestamp);
+}`,
+    explanation: '¿Quién la llama? Tu backend en caso de emergencia: bug detectado, ataque en progreso, requerimiento regulatorio urgente. pause() bloquea todas las operaciones de usuarios. Es el "botón de emergencia" del contrato.'
+  }
+};
+
+function showFunc(key) {
+  document.getElementById('func-code').innerHTML = funcs[key].code;
+  const exp = document.getElementById('func-explanation');
+  exp.style.display = 'block';
+  exp.textContent = funcs[key].explanation;
+}
+
+// ===== FUNCTION SIMULATOR =====
+let fnWl = true;
+let fnPaused = false;
+let fnBalance = 0;
+
+function fnSetWl(v) {
+  fnWl = v;
+  document.getElementById('fn-wl-yes').className = 'secondary' + (v ? ' active' : '');
+  document.getElementById('fn-wl-no').className  = 'secondary' + (!v ? ' active' : '');
+}
+function fnSetPaused(v) {
+  fnPaused = v;
+  document.getElementById('fn-run').className   = 'secondary' + (!v ? ' active' : '');
+  document.getElementById('fn-pause').className = 'secondary' + (v ? ' active' : '');
+}
+function fnCall(fn) {
+  const out = document.getElementById('fn-output');
+  const addr = document.getElementById('fn-address').value || '0xABC123';
+  if (fn === 'balance') {
+    out.className = 'sim-output ok';
+    out.textContent = '→ balanceOf(' + addr + ')\n← ' + fnBalance + ' tokens (lectura gratuita, sin gas)';
+    return;
+  }
+  if (fn === 'freeze') {
+    out.className = 'sim-output err';
+    out.textContent = '→ freeze(' + addr + ')\n✗ REVERT: "Solo admin"\nEsta función solo la puede llamar la wallet admin del contrato, no una wallet de inversor.';
+    return;
+  }
+  if (fn === 'buy') {
+    if (fnPaused) { out.className='sim-output err'; out.textContent='✗ REVERT: "Contrato pausado"\nNingún usuario puede operar mientras el contrato esté pausado.'; return; }
+    if (!fnWl)    { out.className='sim-output err'; out.textContent='✗ REVERT: "Sin KYC aprobado"\nTu wallet no está en la whitelist. Completá el KYC primero.'; return; }
+    fnBalance += 100;
+    out.className = 'sim-output ok';
+    out.textContent = '→ buyTokens(100)\n✓ Modificador whenNotPaused: OK\n✓ Modificador onlyWhitelisted: OK\n→ balances[' + addr + '] += 100\n→ emit TokensPurchased(' + addr + ', 100)\n✓ ÉXITO: 100 tokens acreditados\nBalance actual: ' + fnBalance + ' tokens';
+  }
+}
+
+// ===== ERC CONTENT =====
+const ercContent = {
+  '20': `<div style="font-size:14px;color:#444;margin-bottom:12px;"><strong>ERC-20</strong> es el estándar básico de tokens fungibles. Es el "token estándar" de Ethereum. Cualquier token de DeFi, la mayoría de criptomonedas en exchanges — son ERC-20.</div>
+<div class="code"><span class="c">// Las 6 funciones obligatorias de ERC-20</span>
+<span class="k">function</span> totalSupply() → <span class="t">uint256</span>
+<span class="k">function</span> balanceOf(address) → <span class="t">uint256</span>
+<span class="k">function</span> transfer(address to, <span class="t">uint256</span> amount)
+<span class="k">function</span> approve(address spender, <span class="t">uint256</span> amount)
+<span class="k">function</span> transferFrom(address from, address to, <span class="t">uint256</span> amount)
+<span class="k">function</span> allowance(address owner, address spender) → <span class="t">uint256</span></div>
+<div class="danger-box">❌ <strong>Por qué no lo usás en Ladrillo:</strong> ERC-20 no tiene restricciones de transferencia. Cualquiera puede transferir tokens a cualquiera sin KYC. Un inversor podría vender sus tokens de propiedades a alguien no verificado, violando la regulación.</div>`,
+  '1400': `<div style="font-size:14px;color:#444;margin-bottom:12px;"><strong>ERC-1400</strong> es el estándar de security tokens. Agrega restricciones de transferencia sobre ERC-20. Fue el primer intento de crear un estándar para tokens regulados.</div>
+<div class="code"><span class="c">// Agrega sobre ERC-20:</span>
+<span class="k">function</span> canTransfer(address to, <span class="t">uint256</span> amount) → <span class="t">bool</span>
+<span class="c">// Verifica si una transferencia es válida antes de ejecutarla</span>
+
+<span class="k">function</span> transferWithData(address to, <span class="t">uint256</span> amount, <span class="t">bytes</span> data)
+<span class="c">// Transferencia con datos adicionales (ej: motivo regulatorio)</span>
+
+<span class="k">function</span> isControllable() → <span class="t">bool</span>
+<span class="c">// Si el emisor puede forzar transferencias (para reguladores)</span></div>
+<div class="warn-box">⚠️ <strong>Para Ladrillo:</strong> posible pero no ideal. ERC-1400 no tiene un sistema de identidad on-chain estandarizado. Tendrías que construir el KYC/whitelist desde cero, lo que aumenta el riesgo de bugs.</div>`,
+  '3643': `<div style="font-size:14px;color:#444;margin-bottom:12px;"><strong>ERC-3643</strong> (también conocido como T-REX — Token for Regulated EXchanges) es el estándar de facto para security tokens regulados en Europa. Desarrollado por Tokeny Solutions.</div>
+<div class="code"><span class="c">// Arquitectura de ERC-3643</span>
+
+<span class="c">// 1. Identity Registry — el KYC on-chain</span>
+<span class="k">contract</span> IdentityRegistry {
+  mapping(<span class="t">address</span> => Identity) identities;
+  <span class="k">function</span> isVerified(<span class="t">address</span> wallet) → <span class="t">bool</span>
+  <span class="k">function</span> registerIdentity(<span class="t">address</span> wallet, Identity id)
+}
+
+<span class="c">// 2. Compliance — las reglas de negocio</span>
+<span class="k">contract</span> Compliance {
+  <span class="k">function</span> canTransfer(from, to, amount) → <span class="t">bool</span>
+  <span class="c">// ¿Ambas wallets tienen KYC? ¿Límites de inversión?</span>
+  <span class="c">// ¿Jurisdicción permitida? ¿Lockup period?</span>
+}
+
+<span class="c">// 3. Token — el token en sí</span>
+<span class="k">contract</span> Token {
+  <span class="k">function</span> transfer() {
+    require(compliance.canTransfer(from, to, amount));
+    <span class="c">// solo transfiere si compliance lo aprueba</span>
+  }
+  <span class="k">function</span> freeze(<span class="t">address</span> wallet)
+  <span class="k">function</span> forcedTransfer(from, to, amount) <span class="c">← para reguladores</span>
+}</div>
+<div class="success-box">✓ <strong>Por qué ERC-3643 para Ladrillo:</strong> tiene KYC on-chain nativo, transfer restrictions automáticas, freeze de wallets, forced transfer para reguladores, y está diseñado explícitamente para cumplir MiCA. Reental (plataforma española de tokenización inmobiliaria) lo usa. Es open source, auditado, y tiene soporte activo.</div>`
+};
+
+function showERC(key) {
+  document.getElementById('erc-content').innerHTML = ercContent[key];
+  document.querySelectorAll('[onclick^="showERC"]').forEach(b => {
+    b.className = 'secondary' + (b.getAttribute('onclick').includes("'"+key+"'") ? ' active' : '');
+  });
+}
+showERC('20');
+</script>
+</body>
+</html>
